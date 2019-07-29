@@ -1,14 +1,14 @@
-
-# Modèles testés: 110 au total
-
+Liste des modeles testés et validés: 112 au total!
  - AXIS 205 Network Camera
  - AXIS 206 Network Camera
  - AXIS 207MW Network Camera
  - AXIS 207 Network Camera
  - AXIS 207W Network Camera
  - AXIS 209FD Network Camera
+ - AXIS 209MFD Network Camera
  - AXIS 2100 Network Camera
  - AXIS 210 Network Camera
+ - AXIS 2110 Network Camera
  - AXIS 211M Network Camera
  - AXIS 211 Network Camera
  - AXIS 2120 Network Camera
