@@ -3,7 +3,7 @@
 # h4ckr213dz@gmail.com
 #
 # CHANGELOG:
-# 1.1 [27.07.2019] :
+# 2.0 [27.07.2019] :
 #
 #	- Ajout information : 
 #		- Affichage de la durée de l'attaque dans le résumé
