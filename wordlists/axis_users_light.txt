@@ -1,5 +1,0 @@
-root
-admin
-axis
-viewer
-operator
