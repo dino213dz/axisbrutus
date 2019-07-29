@@ -3,7 +3,7 @@
 # h4ckr213dz@gmail.com
 #
 # CHANGELOG:
-# 2.0 [27.07.2019] :
+# 2.0 [27.07.2019]:
 #
 #	- Ajout information : 
 #		- Affichage de la durée de l'attaque dans le résumé
@@ -26,7 +26,7 @@
 ####################################################################################################################
 ab_auteur='CHORFA Alla-eddine'
 ab_date_creation='25.07.2019'
-ab_date_maj='28.07.2019 17:54'
+ab_date_maj='29.07.2019 17:21'
 ab_ver='2.0'
 ab_contact='h4ckr213dz@gmail.com'
 ab_web='https://github.com/dino213dz/'
