@@ -8,8 +8,6 @@
  - Contact: h4ckr213dz@gmail.com
  - Web: http://dino213dz.free.fr
 
-
-
 # Description:
  - La plus fine des brutes!
  - Brute force les interfaces web des cameras IP AXIS
@@ -29,6 +27,8 @@
  - --list, -l : liste les modeles de camera compatibles
  - --help, -h : affiche l'aide
  - --no-geo, --nogeo, -g : Désactive la géolocalisation de l'IP
+ - --check, --chk : Vérifie uniquement la compatibilité d'un modele sans procéder à l'attaque
+ - --log, --logs : Définit l'emplacement du fichier logs des operations d'attaque. La valeur  par défaut est : ./axisBrutus.log
  - --passwords, -p : fichier wordlist contenant la liste des mots-de-passe
  - --usernames, -u: fichier wordlist contenant la liste des noms d'utilisateurs
  - --export, --output, -o : fichier dans lequel le mot-de-passe sera enregistré s'il est trouvé. Aucun fichier créé si le mot-de-passe n'est pas trouvé
@@ -66,19 +66,27 @@
  - Effacer les logs
 
 # Change logs:
- - Version 2.0 :
+ - Version 2.1 :
+	- Ameliorations:
+		- Logging attaques : Un fichier logs est créé afin de logger les actions. Pratique lorsqu'on envoi une grande liste d'adresses ip en parametre.
+		- Afficher l'IP Cible à chaque combinaison: permet de savoir quelle ip est ciblées sans devoir remonter tout en haut de l'écran.
+	- Nouveautés
+		- Ajout du parametre permettant de definir un fichier log pour les attaques : --check, -k
+		- Ajout d'un parametre qui vérifie la compatibilité de la version de la camera mais sans attaque : --check, -k
+	- Correction de bugs : 
+		- Prise en compte du décalage d'heure d'été dans les calculs des durées
 
+ - Version 2.0 :
 	- Ameliorations:
 		- Amelioration de la recherche de page protegées
 		- Corrections de bugs
-
 	- Nouveautés
 		- Geolocalisation de l'IP
 		- Telechargement de fichiers
 		- Effacement de traces
 
 # Améliorations à venir:
- - Ajout d'un parametre qui vérifie la version de la compatibilité de la camera mais sans bruteforcer : --check, -k
+ - Parametrage des timeout et maxtime des requetes curl
  - Creation d'accès permanant caché (root-kit) : --root-kit
  - activation de l'accès ftp --ftp-on port
  - Activation d'un reverseshell si possible (depend de la version) --reverse-shell
