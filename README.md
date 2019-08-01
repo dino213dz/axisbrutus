@@ -33,7 +33,7 @@
  - --usernames, -u: fichier wordlist contenant la liste des noms d'utilisateurs
  - --export, --output, -o : fichier dans lequel le mot-de-passe sera enregistré s'il est trouvé. Aucun fichier créé si le mot-de-passe n'est pas trouvé
  - --url, -r : L'url dépend du modele. Vous pouvez le modifier si vous souhaitez tester une page web bien précise (cas d'un modele inconnu par exemple)
- - --verbose, -v : L'url dépend du modele. Vous pouvez le modifier si vous souhaitez tester une page web bien précise (cas d'un modele inconnu par exemple)
+ - --verbose, -v : permet d'afficher plus ou moins d'infos à l'écran
 
 # Exemples:
  - Attaque standard par ip ou par url. les wordlist utilisés ici sont ceux par defaut. (Voir "Description")
@@ -54,7 +54,10 @@
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --passwords ./axis_pass.txt --usernames ./axis_usernames.txt 
 
  - Definir le fichier de sauvegarde:
-	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --export mdp_axis_test.txt]
+	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --export mdp_axis_test.txt --verbose 
+
+ - Mode verbeux (Garde à l'ecran les combinaisons testées + affiche le contenu du fichers téléchargés:
+	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --verbose 
 
 # Algorithme:
  - Récuperer le modele de la camera
