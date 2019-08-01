@@ -3,8 +3,8 @@
 # A propos:
  - Auteur: CHORFA Alla-eddine
  - Crée le: 25.07.2019
- - Edité le: 29.07.2019
- - Version: 2.0
+ - Edité le: 01.08.2019
+ - Version: 2.2
  - Contact: h4ckr213dz@gmail.com
  - Web: http://dino213dz.free.fr
 
@@ -33,6 +33,7 @@
  - --usernames, -u: fichier wordlist contenant la liste des noms d'utilisateurs
  - --export, --output, -o : fichier dans lequel le mot-de-passe sera enregistré s'il est trouvé. Aucun fichier créé si le mot-de-passe n'est pas trouvé
  - --url, -r : L'url dépend du modele. Vous pouvez le modifier si vous souhaitez tester une page web bien précise (cas d'un modele inconnu par exemple)
+ - --verbose, -v : L'url dépend du modele. Vous pouvez le modifier si vous souhaitez tester une page web bien précise (cas d'un modele inconnu par exemple)
 
 # Exemples:
  - Attaque standard par ip ou par url. les wordlist utilisés ici sont ceux par defaut. (Voir "Description")
@@ -66,6 +67,12 @@
  - Effacer les logs
 
 # Change logs:
+ - Version 2.2 :
+	- Ameliorations:
+		- Mode verbeux (--verbose, --v) : Possibilité d'affichier plus ou moins d'infos à l'écran 
+	- Correction de bugs : 
+		- calcul de durée plus précis
+		- Suppresson des fichiers temporaires locaux
  - Version 2.1 :
 	- Ameliorations:
 		- Logging attaques : Un fichier logs est créé afin de logger les actions. Pratique lorsqu'on envoi une grande liste d'adresses ip en parametre.
@@ -86,7 +93,9 @@
 		- Effacement de traces
 
 # Améliorations à venir:
- - Parametrage des timeout et maxtime des requetes curl
+ - Estimation du temps restants d'après le nombre de combinaisons restantes et la durée des précedentes 
+ - Forcer l'utilisation d'un username en particulier, d'un mot-de-passe ou les deux
+ - Parametrage des timeout et maxtime des requetes curl	
  - Creation d'accès permanant caché (root-kit) : --root-kit
  - activation de l'accès ftp --ftp-on port
  - Activation d'un reverseshell si possible (depend de la version) --reverse-shell
