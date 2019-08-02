@@ -711,7 +711,7 @@ logMessage "Fichier mots-de-passe : $mdp_wordlist" "INFORMATION"
 
 echo -e "$jaune_fonce\n$souligne"'TEST DE CONNECTIVITE:'$reset
 
-echo -e "$jaune[+] Test en cours :$cyan ping $ip..."
+echo -e "$jaune[+] Test en cours :$cyan ping $ip_only..."
 test_connectivite=$(checkConnectiviteCible)
 if [ "$test_connectivite" = "SUCCES" ];then
 	echo -e "$jaune |_[-] Resultat :$vert OK!"
@@ -753,10 +753,11 @@ else
 			echox "$jaune |_[-] Détection en cours: "$(afficherBarre $no_modele_recherche ${#liste_modeles_verifies[*]} )""
 			if [ "$mod" = "$modele" ];then
 				modeles_verifie="OUI"
-				echox "$jaune |_[-] Détection en cours:$cyan Terminée!"
 				break
 			fi
 		done
+		echox "$jaune |_[-] Détection en cours:$cyan Terminée!"
+		
 
 		if [ "$modeles_verifie" = "OUI" ];then
 			echo -e "$jaune |_[-] Modele:$cyan $modele $vert(testé et vérifié!) $jaune_fonce;)"
@@ -961,6 +962,8 @@ if [ "$mdp_trouve" = "OUI" ]; then
 
 	#echo -e "$jaune |_[-] Succes: $cyan$message_fin"
 	tput cuu1;tput el;echo -e "$jaune[+] Attaque $ip:$vert Succes!$cyan $message_fin"
+	echo -e "$jaune |_[-] Login: $user"
+	echo -e "$jaune |_[-] Mot-de-passe: $mdp"
 	echo -e $vert
 	echo -e $banniere_bravo|base64 -d
 	echo -e $ab_slogan_bravo
