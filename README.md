@@ -44,6 +44,9 @@
  - --export, --output, -o : fichier dans lequel le mot-de-passe sera enregistré s'il est trouvé. Aucun fichier créé si le mot-de-passe n'est pas trouvé
  - --url, -r : L'url dépend du modele. Vous pouvez le modifier si vous souhaitez tester une page web bien précise (cas d'un modele inconnu par exemple)
  - --verbose, -v : permet d'afficher plus ou moins d'infos à l'écran. Si verbeux alors : Garde à l'ecran les combinaisons testées & affiche le contenu du fichers téléchargés
+ - --timeout, -t : definit le temps de reponse limite dans curl
+ - --maxtime, -m : Définit le temps limite d'une requete curl
+ - --ping-timeout : definit le timeout du test de conenctivité (ping)
 
 # Exemples:
  - Attaque standard par ip ou par url. les wordlist utilisés ici sont ceux par defaut. (Voir "Description")
