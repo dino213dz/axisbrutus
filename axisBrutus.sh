@@ -115,7 +115,7 @@ liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" 
 # detecte si erreur 401 : page non autorisée
 function checkConnectiviteCible {
 	#ping_timeout=10
-	packets_perdus=$(/bin/ping -W $ping_timeout -c 1 $ip|grep '%'|cut -d ' ' -f 6|cut -d '%' -f 1)
+	packets_perdus=$(/bin/ping -W $ping_timeout -c 1 $ip_only|grep '%'|cut -d ' ' -f 6|cut -d '%' -f 1)
 	if [ $packets_perdus -ne 0 ];then
 		echo "ECHEC"
 	else
@@ -483,6 +483,7 @@ for no_arg in $(seq 0 $nb_args); do
 			ip=${ip/https:\/\//}
 			ip=${ip/http:\/\//}
 			ip=${ip//\//}
+			ip_only=${ip%:*}
 		fi
 		#parametres optionnels
 
