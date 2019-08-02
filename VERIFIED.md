@@ -1,4 +1,4 @@
-# Liste des modeles testés et validés: 112 au total!
+# Liste des modeles testés et validés: 113 au total!
 - AXIS 205 Network Camera
 - AXIS 206 Network Camera
 - AXIS 207 Network Camera
@@ -35,6 +35,7 @@
 - AXIS M1031-W Network Camera
 - AXIS M1034-W Network Camera
 - AXIS M1054 Network Camera
+- AXIS M1065-L Network Camera
 - AXIS M1104 Network Camera
 - AXIS M1113 Network Camera
 - AXIS M1114 Network Camera
