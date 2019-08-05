@@ -1,0 +1,166 @@
+#!/bin/bash
+#axisBrutus.lang
+
+
+#VOCAB
+vocab_error="Erreur"
+vocab_example="Exemple"
+vocab_solution="Solution"
+vocab_results="Resultat"
+vocab_version="Version"
+vocab_by="Par"
+vocab_or="ou"
+vocab_ok="OK!"
+vocab_ko="K.O.!"
+vocab_yes="OUI"
+vocab_no="NON"
+vocab_echec="ECHEC"
+vocab_succes="SUCCES"
+vocab_disabled="Désactivée"
+vocab_enabled="Activée"
+vocab_running="En cours"
+vocab_finished="Terminé!"
+vocab_connection="Connexion"
+vocab_model="Modele"
+vocab_firmware="Firmware"
+vocab_compatibility="Compatibilité"
+vocab_verified="verifié"
+vocab_notverified="non verifié"
+vocab_known="connu"
+vocab_unknown="inconnu"
+vocab_login="Login"
+vocab_password="Mot-de-passe"
+vocab_files="Fichiers"
+vocab_date="Date"
+vocab_intotal="au total"
+vocab_parameter="parametre"
+
+#GEOLOCALISATION
+geo_continentCode="Code continent"
+geo_continentName="Continent"
+geo_countryCode="Code pays"
+geo_countryName="Pays"
+geo_stateProvCode="Code état"
+geo_stateProv="Département/Etat"
+geo_city="Ville/Commune"
+
+#GEOLOCALISATION
+models_list_title="Liste des modeles testés et validés: __TOTALMODELS__ au total!"
+
+#ERREURS
+err_no_cible="Vous devez specifier une cible avec l'argument"
+err_msg_aff_aide="Vous pouvez afficher l'aide avec l'argument"
+err_fichier_introuvable="Le fichier suivant n'a pas été trouvé"
+err_dependences="Dependences non satisfaites"
+err_exit="Erreur fatale. On quitte..."
+err_ping="Pas d'attaque à faire"
+err_modele_inconnu="Le modele n'a pas été reconnu!"
+err_javascript_required="Necessite Javascript. Verifiez cette combinaison manuellement pour vérifier svp"
+err_javascript_url_notfound="Page introuvable. Forcez l'URL avec l'argument \"--url /admin/users.shtml\" "
+err_javascript_resume="Cette interface web axis nécessite javascript"
+err_javascript_info="Version javascript en cours de dev"
+err_tries_without_succes="essais sans trouver"
+
+#TITRES DES SECTIONS
+section_dependences="VERFIFICATIONS DES DEPENDENCES"
+section_parametres="PARAMETRES"
+section_testConnectivite="TEST DE CONNECTIVITE"
+section_analyse="ANALYSE"
+section_informations="INFORMATIONS"
+section_attack="TRAITEMENT"
+section_synthese="SYNTHESE DES DONNEES POUR l'EXPORT"
+section_telechargement="TELECHARGEMENT DE FICHIERS"
+section_savegarde="SAUVEGARDE/EXPORT"
+section_resume="RESUME"
+section_eraseLogs="EFFACER LES TRACES/LOGS"
+
+#ELEMENTS DU MENU
+element_commandes="Commandes"
+element_commandes_ping="ping"
+element_commandes_curl="curl"
+element_param="Cible"
+element_param_dicos="Dictionnaires"
+element_param_dicos_list_mdp="Liste des mot-de-passe"
+element_param_dicos_list_users="Liste des usernames"
+element_param_dicos_nb_combinaisons="Nombre de combinaisons"
+element_param_modele_detect="Detection du modele"
+element_param_ping_timeout="Ping timeout"
+element_param_ping_timeout_value="Ignorer le résultat du ping"
+element_param_test_co="Test de connectivité"
+element_param_attack_only="Attaque désactivée"
+element_param_attack_only_value="Verifications du modele uniquement"
+element_param_uri_forced="URI imposée"
+element_param_geolocalisation="Geolocalisation"
+element_param_fic_logs="Fichier log"
+element_param_ttl="TTL Requêtes HTTP"
+element_testco="Test en cours"
+element_testco_ignore="Test ignoré"
+element_testco_ignore_skip="On attaque quand même"
+element_testco_ignore_skip_value="On ignore le résultat du ping"
+element_analyse_mod_tested="Modeles testés"
+element_analyse_mod_test_igonre="Detection du modele non effectuée car l'argument --skip (-s) a été passé!"
+element_analyse_mod_detect="Detection du modèle"
+element_analyse_mod_detect_running='Détection en cours'
+element_analyse_mod_detect_tested="testé et vérifié!"
+element_analyse_mod_detect__nontested="non testé!"
+element_analyse_mod_detect_firmware='Detection de la version du firmware'
+element_analyse_mod_detect_listhelp='--list pour lister les modeles testés'
+element_analyse_url_search="Cherche une URL à attaquer"
+element_analyse_geolocate="Geolocalisation de la cible"
+element_prep_env="Préparation de l'environnement"
+element_info_firmware="Firmware ver."
+element_info_url_cible="URL Cible generée"
+element_info_fic_export="Export des données d'authentifications"
+element_info_geo_nothing="Pas d'informations disponibles"
+element_attack="Attaque"
+element_attack_finished_succes="Le mot-de-passe a été trouvé en __TOTALTIME__s après __TOTALCOMBI__ tentatives. " #Champs dynamiques : __TOTALTIME__ __TOTALCOMBI__
+element_attack_finished_echec="Le mot-de-passe n'a pas été trouvé apres __TOTALCOMBI__ combinaisons, soit __TOTALTIME__s d'attaque! " #Champs dynamiques : __TOTALTIME__ __TOTALCOMBI__
+element_dl_finished="Télechargement des fichier"
+element_exporting="Export des données"
+element_resume_bravo="Bravo"
+element_resume_echec="Export"
+element_resume_info="Info"
+element_resume_astuce="Astuce"
+element_resume_fail="M****"
+element_resume_duration="Durée"
+element_resume_succes="On l'a trouvé en __TOTALCOMBI__ essais!"
+element_resume_export="Les informations d'identification ont été stockées ici"
+
+#MESSAGES DIVERS
+msg_succes="Authentification réussie! ([P4wn3d])"
+msg_echec="Echec de l'authentification!"
+msg_astuce_noresult="Ajoute des logins et des mdp aux fichiers wordlist"
+
+#ELEMENTS DES LOGS
+logs_type_info="INFORMATION"
+logs_type_warning="ATTENTION!"
+logs_type_error="ERREUR!!!"
+logs_type_pawned="P4WN3D!!!"
+logs_type_notpawned="DOMMAGE!!!"
+logs_msg_start="#################### Démarrage : __NBCOMBINAISONS__ combinaisons possibles ####################"
+logs_msg_verif="#################### Verifications uniquement : ####################"
+logs_fic_usernames="Fichier usernames"
+logs_fic_mdp="Fichier mot-de-passe"
+logs_testco_ignore="On ignore le résultat du ping"
+logs_modele_compatible_ok="$vocab_compatibility: $vocab_model $vocab_verified"
+logs_modele_compatible_echec="$vocab_compatibility: $vocab_model $vocab_notverified!"
+logs_dl_fic="Telechargement des fichiers"
+logs_eraselogs="Effacement des logs"
+
+export_title_attack="INFORMATIONS ATTAQUE"
+export_title_creds="INFORMATIONS IDENTIFICATION"
+export_title_cam="INFORMATIONS CAMERA"
+export_start="Départ de l'attaque"
+export_end="Fin de l'attaque"
+export_nbtry="Nombre tentatives"
+export_total="sur un total de"
+export_detection_ignored="La détection du modèle a été ignorée : L'argument \"--skip\" (ou équivalent) a été passé."
+export_geo_ignored="La géolocalisation a été ignorée : L'argument \"--no-geo\" (ou équivalent) a été passé."
+
+
+
+
+
+
+
+

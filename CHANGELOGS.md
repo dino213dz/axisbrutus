@@ -1,6 +1,16 @@
 # AXIS BRUTUS
 
 # Change logs:
+- Version 2.5 :
+	- Améliorations:
+		- Ajout d'un fichier de configuration et de personnalisation
+		- Ajout d'un fichier de traductions des messages
+		- Agencements et ajout d'informations lors de l'attaque
+		- Ajout de smiley
+		- Fichier temporaire horodaté pour eviter les conflit en cas de multi-process
+	- Ajout de modèles vérifiés:
+		- AXIS 210A Network Camera
+		- AXIS 2401 Network Camera
 - Version 2.4 :
 	- Améliorations:
 		- Vérification des dépendances:
@@ -47,6 +57,7 @@
 		- Effacement de traces
 
 # Améliorations à venir:
+- sauvegarder la liste des ip deja scannées,status(mdp trouvé ou pas), la date de l'attaque, modele de l'impriante, nombre de combinaisons testées, wordlists utilisées
 - --cortex-mode: Utiliser le social Engeneering en plus. utiliser le nom de la ville ou le departement comme mot-de-passe ainsi que les logins 
 - Fichier de configuration séparé du code
 - Verification des ip déjà craquées

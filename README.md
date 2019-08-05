@@ -3,8 +3,8 @@
 # A propos:
 - Auteur: CHORFA Alla-eddine
 - Crée le: 25.07.2019
-- Edité le: 02.08.2019
-- Version: 2.4
+- Edité le: 05.08.2019
+- Version: 2.5
 - Contact: h4ckr213dz@gmail.com
 - Web: http://dino213dz.free.fr
 
@@ -25,9 +25,9 @@
 - Recherche d'URL protégée par mot-de-passe
 - Brute force
 - Si mot de passe trouvé:
-- Télécharger les fichiers de configuration
-- Sauvegarde des données
-- Effacer les logs
+	- Télécharger les fichiers de configuration
+	- Sauvegarde des données
+	- Effacer les logs
 
 # Syntaxe:
 - $> ./axisBrutus.sh -c IP:PORT [OPTIONS]
