@@ -3,6 +3,8 @@
 # Change logs:
 - Version 2.5 :
 	- Améliorations:
+		- Sauvegarder la liste des ip deja scannées avec la date de l'attaque. 
+		- Possibilité de sauter les cible présentes dans le l'historique graceau parametre --hist-break
 		- Ajout d'un fichier de configuration et de personnalisation
 		- Ajout d'un fichier de traductions des messages
 		- Agencements et ajout d'informations lors de l'attaque
@@ -57,7 +59,6 @@
 		- Effacement de traces
 
 # Améliorations à venir:
-- sauvegarder la liste des ip deja scannées,status(mdp trouvé ou pas), la date de l'attaque, modele de l'impriante, nombre de combinaisons testées, wordlists utilisées
 - --cortex-mode: Utiliser le social Engeneering en plus. utiliser le nom de la ville ou le departement comme mot-de-passe ainsi que les logins 
 - Fichier de configuration séparé du code
 - Verification des ip déjà craquées

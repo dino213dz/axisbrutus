@@ -1,6 +1,9 @@
+[![License](https://img.shields.io/badge/license-GPLv2-green.svg)](https://github.com/dino213dz)
+![logo](https://avatars2.githubusercontent.com/u/34544107 "axisBrutus Logo")
+
 # AXIS BRUTUS
 
-# A propos:
+## A propos:
 - Auteur: CHORFA Alla-eddine
 - Crée le: 25.07.2019
 - Edité le: 05.08.2019
@@ -8,18 +11,19 @@
 - Contact: h4ckr213dz@gmail.com
 - Web: http://dino213dz.free.fr
 
-# Description:
+## Description:
 - La plus fine des brutes!
 - Brute force les interfaces web des cameras IP AXIS
-- Nécessite un fichier mdp et un fichier usernames :
+- Nécessite un fichier de mots-de-passe et un fichier usernames :
 	1- ./wordlists/axis_users.txt
 	2- ./wordlists/axis_mdp.txt
 - Ces fichiers contiennent les logins et mot-de-passe par défaut des caméras Axis.
 
-# Algorithme:
+## Algorithme:
 - Vérifier les dépendances
 - Verifier les paramètres et les fichiers
-- Veifier la connectivité de la cible
+- Verifier l'historique
+- Verifier la connectivité de la cible
 - Récuperer le modèle de la caméra
 - Recuperer le firmware
 - Recherche d'URL protégée par mot-de-passe
@@ -29,13 +33,13 @@
 	- Sauvegarde des données
 	- Effacer les logs
 
-# Syntaxe:
+## Syntaxe:
 - $> ./axisBrutus.sh -c IP:PORT [OPTIONS]
 
-# Paramètres obligatoires:
+## Options/Parametres:
+### Paramètres obligatoires:
 - --cible, -c : IP, IP:PORT, URL
-
-# Parametres optionnels:
+### Parametres optionnels:
 - --skip, -s : N'effectue pas la détection du modèle. L'url cible sera "/operator/basic.shtml" qui est la plus probable. L'argument --url peut être utilisé pour changer l'url cible.
 - --list, -l : liste les modèles de caméra compatibles
 - --help, -h : affiche l'aide
@@ -51,40 +55,36 @@
 - --maxtime, -m : définit le temps limite d'une requête curl
 - --ping-timeout : définit le timeout du test de connectivité (ping)
 - --ignore, -i : ignorer le résultat du test de connectivité (attaquer dans tous les cas)
+- --hist-break, --history-break : Sauter les cibles présentes dans l'historique. L'historique est stocké dans le fichier "./axisBrutus.history".
 
-# Exemples:
-- Attaque standard par ip ou par url. les wordlist utilisés ici sont ceux par défaut. (Voir "Description")
+## Exemples:
+### Attaque standard par ip ou par url:
+- Les wordlist utilisés ici sont ceux par défaut. (Voir "Description")
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83
 	 - $> ./axisBrutus.sh --cible http://192.23.36.254:83
 	 - $> ./axisBrutus.sh --cible https://maCameraIp213dz.axis.com/
-
-- Afficher la liste des modèles compatibles
+### Afficher la liste des modèles compatibles:
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --list
-
-- Pas de géolocalisation
+### Pas de géolocalisation
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --no-geo
-
-- Pas de détection du modèle. on définit le TARGETURI manuellement.
+### Pas de détection du modèle:
+- On définit le TARGETURI manuellement. peut servir pour attaquer d'autres type de cameras. du moment qu'il s'agisse d'une page protegée par uen authentification http simple.
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --skip --url /admin/admin.shtml
-
-- Definir une liste de login mot-de-passe
+### Definir une liste de login mot-de-passe:
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --passwords ./axis_pass.txt --usernames ./axis_usernames.txt
-
-- Définir le fichier de sauvegarde:
+### Définir le fichier de sauvegarde:
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --export mdp_axis_test.txt --verbose
-
-- Fichier logs d'attaque:
+### Fichier logs d'attaque:
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --log ./test.log
-
-- Mode verbeux :
+### Mode verbeux :
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --verbose
-
-- Paramétrage curl:
+### Paramétrage curl:
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --maxtime 10 --timeout 4
-
-- Paramétrage ping:
+###- Paramétrage ping:
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --ping-timeout 4
+### Ne pas attaquer les IP présentes dans l'historique:
+	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --hist-break
 
-- Ignorer le résultat du ping:
-	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --ignore
 
+## Captures d'écran:
+![logo](https://dino213dz.online.com/img/screenshot/axisbrutus_2.5_screenshot.jpg "axisBrutus.sh 2.5")
