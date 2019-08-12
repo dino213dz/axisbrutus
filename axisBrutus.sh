@@ -53,10 +53,8 @@ souligne='\033[4m'
 reset='\033[0m'
 
 #sources
-source config/axisBrutus.lang
 source config/axisBrutus.conf
 
-horodate="$(/bin/date "+%s")"
 modele_nondetecte='AXIS inconnu inconnu'
 fichier_mdp_trouve=$fichier_mdp_trouve_default
 fichier_logs=$fichier_logs_defaut
@@ -93,6 +91,13 @@ screen_height=$(tput lines) #$(stty size|cut -d " " -f 1) #
 ####################################################################################################################
 #                                                       FONCTIONS
 ####################################################################################################################
+
+#FUNCTION:
+# detecte la langue du systeme
+function checkLang {
+	langue=${LANG:0:2}
+	echo $langue
+	}
 
 #FUNCTION:
 # detecte si erreur 401 : page non autorisée
@@ -771,7 +776,7 @@ echo -e "$col_section\n$souligne$section_testConnectivite:$reset"
 if [ "$deja_attaquee" != "FALSE" ];then
 	echo -e "$col_titre$puce_level_1$element_history_testip:$col_texte $element_history_testip_deja: $vocab_date_on $deja_on $vocab_time_at $deja_at [Etat: $deja_status]"
 	if [ "$skipIfInHistory" = "OUI" ];then
-		echo -e "$col_titre$puce_level_2 Annulation:$col_texte $element_history_testip_deja_quitter"
+		echo -e "$col_titre$puce_level_2 $element_history_canceling:$col_texte $element_history_testip_deja_quitter"
 		exit
 	else
 		echo -n "$ip "$(/bin/date '+%d/%m/%y %T') >> $fichier_hist_defaut
@@ -1223,7 +1228,7 @@ if [ "$checkOnly" != "OUI" ]; then
 	if [ "$mdp_trouve" = "OUI" ]; then
 		echo -e "$col_titre$puce_level_1$element_resume_bravo:$col_texte "${element_resume_succes//"__TOTALCOMBI__"/"$col_succes$total_fait$col_texte"}
 		#On l'a trouvé en $col_succes$total_fait$col_texte essais!
-		echo -e "$col_titre$puce_level_1$element_resume_echec:$col_texte $element_resume_export : $col_succes$export_destination"
+		echo -e "$col_titre$puce_level_1$element_resume_export:$col_texte $element_resume_exported : $col_succes$export_destination"
 		echo -e " $logs_type_pawned" >>$fichier_hist_defaut
 	else
 			if [ "$echec_js" = "OUI" ]; then		
