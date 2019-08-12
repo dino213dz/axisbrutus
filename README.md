@@ -87,4 +87,4 @@
 
 
 ## Captures d'écran:
-![logo](https://dino213dz.online.com/img/screenshot/axisbrutus_2.5_screenshot.jpg "axisBrutus.sh 2.5")
+![logo](https://dino213dz.online.fr/img/screenshot/axisbrutus_2.5_screenshot.jpg "axisBrutus.sh 2.5")
