@@ -68,7 +68,7 @@
 ### Pas de géolocalisation
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --no-geo
 ### Pas de détection du modèle:
-- On définit le TARGETURI manuellement. peut servir pour attaquer d'autres type de cameras. du moment qu'il s'agisse d'une page protegée par uen authentification http simple.
+- On définit le TARGETURI manuellement. peut servir pour attaquer d'autres type de cameras. du moment qu'il s'agisse d'une page protegée par uen authentification http simple:
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --skip --url /admin/admin.shtml
 ### Definir une liste de login mot-de-passe:
 	 - $> ./axisBrutus.sh --cible 192.23.36.254:83 --passwords ./axis_pass.txt --usernames ./axis_usernames.txt
@@ -87,4 +87,4 @@
 
 
 ## Captures d'écran:
-![logo](https://dino213dz.online.com/img/screenshot/axisbrutus_2.5_screenshot.jpg "axisBrutus.sh 2.5")
+![logo](http://dino213dz.online.fr/img/screenshot/axisbrutus_2.5_screenshot.jpg "axisBrutus.sh 2.5")
