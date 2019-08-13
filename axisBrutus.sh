@@ -83,7 +83,9 @@ args=("$@")
 nb_args=$#
 
 #liste des modeles testés
-liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" "210A" "211" "211M" "212" "213" "214" "215" "221" "223M" "225FD" "233D" "243SA" "240Q" "241Q" "241S" "247S" "2100" "2110" "2120" "2401" "2401+" "F44" "M1004-W" "M1011" "M1011-W" "M1013" "M1014" "M1025" "M1031-W" "M1034-W" "M1054" "M1065-L" "M1104" "M1113" "M1114" "M1124" "M1125" "M20" "M2025-LE" "M3004" "M3005" "M3006" "M3007" "M3011" "M3024-L" "M3025" "M3026" "M3027" "M3045-V" "M3104-LVE" "M3113" "M3204" "M5014" "M5014-V" "M7001" "M7011" "M7014" "M7016" "P12" "P12/M20" "P1343" "P1344" "P1346" "P1347" "P1354" "P1355" "P1357" "P1365" "P1405-LE" "P1425-E" "P1427-LE" "P1428-E" "P3224-LV" "P3225-LVE" "P3304" "P3343" "P3344" "P3346" "P3354" "P3363" "P3364" "P3364-L" "P3365" "P3367" "P5414-E" "P5415-E" "P5512" "P5512-E" "P5532" "P5532-E" "P5534-E" "P5635-E" "P7214" "Q1604" "Q1755" "Q1765-LE" "Q1775" "Q6032-E" "Q6034-E" "Q6035-E" "Q6042" "Q6042-E" "Q6044-E" "Q6045-E" "Q6054-E" "Q6055-E" "Q6128-E" "Q7401")
+#attention: "M3044-V"
+liste_modeles_verifies=("205" "206" "207" "207W" "207MW" "209FD" "209MFD" "210" "210A" "211" "211M" "212" "213" "214" "215" "221" "223M" "225FD" "233D" "243SA" "240Q" "241Q" "241S" "247S" "2100" "2110" "2120" "2401" "2401+" "F44" "M1004-W" "M1011" "M1011-W" "M1013" "M1014" "M1025" "M1031-W" "M1034-W" "M1054" "M1065-L" "M1104" "M1113" "M1114" "M1124" "M1125" "M20" "M2025-LE" "M3004" "M3005" "M3006" "M3007" "M3011" "M3024-L" "M3025" "M3026" "M3027" "M3044-V" "M3045-V" "M3104-LVE" "M3113" "M3204" "M5014" "M5014-V" "M7001" "M7011" "M7014" "M7016" "P12" "P12/M20" "P1343" "P1344" "P1346" "P1347" "P1354" "P1355" "P1357" "P1365" "P1405-LE" "P1425-E" "P1427-LE" "P1428-E" "P3224-LV" "P3225-LVE" "P3304" "P3343" "P3344" "P3346" "P3354" "P3363" "P3364" "P3364-L" "P3365" "P3367" "P5414-E" "P5415-E" "P5512" "P5512-E" "P5532" "P5532-E" "P5534-E" "P5635-E" "P7214" "Q1604" "Q1755" "Q1765-LE" "Q1775" "Q6032-E" "Q6034-E" "Q6035-E" "Q6042" "Q6042-E" "Q6044-E" "Q6045-E" "Q6054-E" "Q6055-E" "Q6128-E" "Q7401")
+
 
 screen_width=$(tput cols) #$(stty size|cut -d " " -f 2) #
 screen_height=$(tput lines) #$(stty size|cut -d " " -f 1) #
@@ -1038,10 +1040,11 @@ if [ "$checkOnly" != "OUI" ];then
 
 			#si ce n'est pas verbose: effecer la ligne precedente avant d'afficher la suivante
 			if [ "$modeVerbose" != 'OUI' ];then
-				tput cuu1;tput el
 				if [ ${#ligne_complete} -gt $screen_width ];then
-					tput cuu1;tput el
+					tput cuu1;tput el;
 					#echo -e "" #"$res_test_auth "$screen_width/"${#ligne_complete}";sleep 1
+				else
+					tput cuu1;tput el;
 				fi
 			fi
 		done < $mdp_wordlist
@@ -1073,11 +1076,11 @@ if [ "$checkOnly" != "OUI" ] ; then
 		#Le mot-de-passe a été trouvé en "$top_timer"s après $total_fait tentatives. 
 		message_fin=${message_fin//"__TOTALTIME__"/"$top_timer"}
 		message_fin=${message_fin//"__TOTALCOMBI__"/"$total_fait"}
-		tput cuu1;tput el
+		echo -e "";tput cuu1;tput el
 		screen_width=$(tput cols)
 		if [ ${#ligne_complete} -gt $screen_width ];then
-			tput cuu1;tput el
 			echo -e ""
+			tput cuu1;tput el
 		fi
 		echo -e "$col_titre$puce_level_1$element_attack $ip:$col_succes $vocab_succes$col_texte $message_fin"
 		echo -e "$col_titre$puce_level_2$vocab_login: $user"
