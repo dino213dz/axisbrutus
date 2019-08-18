@@ -1042,6 +1042,7 @@ if [ "$checkOnly" != "OUI" ];then
 			if [ "$modeVerbose" != 'OUI' ];then
 				if [ ${#ligne_complete} -gt $screen_width ];then
 					tput cuu1;tput el;
+					tput cuu1;tput el;
 					#echo -e "" #"$res_test_auth "$screen_width/"${#ligne_complete}";sleep 1
 				else
 					tput cuu1;tput el;
