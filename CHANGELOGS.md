@@ -1,6 +1,10 @@
 # AXIS BRUTUS
 
 # Change logs:
+- Version 2.6 :
+	- Améliorations:
+		- Erreur "test_unauthorized" : commande grep remplacée par egrep
+		- Erreur "ligne_complete" : grep starts with * corrigée (grep "\*")
 - Version 2.5 :
 	- Améliorations:
 		- Sauvegarder la liste des ip deja scannées avec la date de l'attaque. 

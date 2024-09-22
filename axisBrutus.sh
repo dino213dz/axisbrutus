@@ -3,15 +3,17 @@
 # h4ckr213dz@gmail.com
 # https://github.com/dino213dz/
 # Créé le 25.07.2019
+# Modifié le 22.09.2024
 #
 ####################################################################################################################
 #                                                     AxisBrutus
 ####################################################################################################################
 ab_auteur='CHORFA Alla-eddine'
 ab_date_creation='25.07.2019'
+ab_date_update='22.09.2024'
 ab_date_maj=$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 6)" "$(/bin/ls -l --time-style=full-iso axisBrutus.sh|cut -d " " -f 7|rev|cut -d ":" -f 2-|rev)
 ab_titre='AxisBrutus'
-ab_ver='2.5'
+ab_ver='2.6'
 ab_contact='h4ckr213dz@gmail.com'
 ab_web='https://github.com/dino213dz/'
 ab_slogan='La plus fine des brutes!'
@@ -1033,7 +1035,7 @@ if [ "$checkOnly" != "OUI" ];then
 
 			echo -e "$res_test_auth "
 			screen_width=$(tput cols) #$(stty size|cut -d " " -f 2)
-			ligne_complete=$(echo -E "$ligne_a_afficher $res_test_auth"|egrep "*"|sed 's/\\033\[.;..m//g')
+			ligne_complete=$(echo -E "$ligne_a_afficher $res_test_auth"|egrep "\*"|sed 's/\\033\[.;..m//g')
 
 			requete_temps_B=$(/bin/date +%s)
 			top_timer=$(( $(/bin/date +%s) -$heure_depart))
