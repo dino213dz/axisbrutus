@@ -981,7 +981,7 @@ if [ "$checkOnly" != "OUI" ];then
 			/usr/bin/curl --connect-timeout $curl_timeout --max-time $curl_maxtime -k -s "$url" --user "$user:$mdp"  -o $tmp	
 						
 			#analyse de la reponse
-			test_unauthorized=$(cat $tmp |grep --binary-files=text -i $echec)
+			test_unauthorized=$(cat $tmp |egrep --binary-files=text -i $echec)
 			test_javascript=$(cat $tmp |egrep --binary-files=text -i 'enable JavaScript')
 			test_administration=$(cat $tmp |egrep --binary-files=text -i 'administration tools')
 			test_configuration=$(cat $tmp |egrep --binary-files=text -i 'Basic Configuration')
